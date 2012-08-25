@@ -182,14 +182,14 @@ char* substr(const char* str, size_t begin, size_t len)
       if (binary_integer[i] == '1')
       {
         mpz_add(di, di, power_of_two);
-        printf("di aa=%d %s\n", aa, mpz_get_str(NULL,10,di));
+        //printf("di aa=%d %s\n", aa, mpz_get_str(NULL,10,di));
 	aa++;
       }
       mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
-      printf("power_of_two b=%d %s\n", b, mpz_get_str(NULL,10,power_of_two));
+      //printf("power_of_two b=%d %s\n", b, mpz_get_str(NULL,10,power_of_two));
       b++;
     }
-    printf("aa = %d\nb = %d\n",aa,b);
+    //printf("aa = %d\nb = %d\n",aa,b);
 
     //  Decimal fraction part
     //  reset the power_of_two back to 1
@@ -201,7 +201,7 @@ char* substr(const char* str, size_t begin, size_t len)
 
     strcpy(decimal_fraction, "0");
 
-    printf("binary_fraction pre-add: %s\n", binary_fraction);
+    //printf("binary_fraction pre-add: %s\n", binary_fraction);
     int j = 0, k = 0;
     for (int i = strlen(binary_fraction) - 1; i > -1; i--)
     {
@@ -214,10 +214,10 @@ char* substr(const char* str, size_t begin, size_t len)
       mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
       k++;
     }
-    printf("j = %d\nk = %d\n",j,k);
+    //printf("j = %d\nk = %d\n",j,k);
 
-    printf("df %s\n", mpz_get_str(NULL, 10, df));
-    printf("powtwo %s\n", mpz_get_str(NULL, 10, power_of_two));
+    //printf("df %s\n", mpz_get_str(NULL, 10, df));
+    //printf("powtwo %s\n", mpz_get_str(NULL, 10, power_of_two));
 
     mpf_set_default_prec(1000);
     mpf_t decf;
