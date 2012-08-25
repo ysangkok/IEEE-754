@@ -5,10 +5,35 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
+#include <cstdlib>
+
 #include <gmp.h>
-#include <stdlib.h>
 
 using namespace std;
+
+map<int,mpf_t*> dfs_backing;
+
+void free_dfs() {
+  map<int,mpf_t*>::iterator it;
+  for ( it=dfs_backing.begin() ; it != dfs_backing.end(); it++ ) {
+    mpf_clear(*(it->second));
+    free(it->second);
+  }
+}
+
+mpf_t* lazyget(int key) {
+	map<int,mpf_t*>::iterator it = dfs_backing.find(key);
+	mpf_t* valptr;
+	if (it==dfs_backing.end()) {
+		valptr = (mpf_t*) malloc(sizeof(mpf_t));
+		mpf_init(*valptr);
+		dfs_backing.insert(pair<int,mpf_t*>(key,valptr));
+	} else {
+		valptr = it->second;
+	}
+	return valptr;
+}
 
 //  main()
 //  -------------------------------------------------------------------
@@ -29,7 +54,7 @@ using namespace std;
  */
   int main(int argc, char* argv[])
   {
-    const int BINARY_PRECISION = 128;
+    if (argc != 6) return 1;
     int       decimal_exponent;
     string    binary_integer;
     string    binary_fraction;
@@ -120,22 +145,14 @@ using namespace std;
     vector<string> decimal_fractions;
     decimal_fractions.push_back(decimal_fraction);
 
-    int   pos = 0;
-    bool  hasAlteredPSF = false;
-    bool  foundFirstOne = false;
-    int   count = 0;
-
     mpz_t intSum;
     mpz_init(intSum);
     string sum;
-    char* tempSum;
 
     mpf_set_default_prec(20000);
     mpf_t df;
     mpf_init(df);
     mpf_set_str(df, ("0." + decimal_fraction).c_str(), 10);
-
-    int n = 30;
 
     mpf_t temp_df;
     mpf_init(temp_df);
@@ -171,15 +188,19 @@ using namespace std;
     rArr[rac] = superRL;
     rac++;
 
+/*
     mpf_t dfs [50000];
     for (int i =0; i<50000; i++)
     {
       mpf_init(dfs[i]);
     }
+*/
 
     int a = 0;
-    bool binaryRecurrenceFound = false;
-    mpf_set(dfs[a], df);
+    {
+      mpf_t* tmp = lazyget(a);
+      mpf_set(*tmp, df);
+    }
     a++;
     mpf_add(df, df, df);
     mpf_t poft; //  this is the power of ten variable, only used when there are
@@ -272,10 +293,10 @@ using namespace std;
 
       for (int i = 0; i < a; i++)
       {
-        if (mpf_eq(temp_df, dfs[i], 112) != 0)
+	mpf_t* tmp = lazyget(i);
+        if (mpf_eq(temp_df, *tmp, 112) != 0)
         {
           // Binary recurrence found
-          binaryRecurrenceFound = true;
           binary_recurrence_start =i;
           binary_recurrence = binary_fraction.substr(binary_recurrence_start);
           break;
@@ -286,13 +307,19 @@ using namespace std;
       {
         binary_fraction = binary_fraction + "1";
         mpf_sub_ui(df, df, 1);
-        mpf_set(dfs[a], df);
+	{
+		mpf_t* tmp = lazyget(a);
+        	mpf_set(*tmp, df);
+	}
         a++;
       }
       else
       {
         binary_fraction = binary_fraction + "0";
-        mpf_set(dfs[a], df);
+	{
+		mpf_t* tmp = lazyget(a);
+        	mpf_set(*tmp, df);
+	}
         a++;
       }
 
@@ -403,6 +430,15 @@ using namespace std;
     printf("%s\n", binary_recurrence.c_str());
     printf("%d\n", binary_recurrence_start);
 
+    free_dfs();
+    mpf_clear(temp_df);
+    mpf_clear(dr_temp);
+    mpf_clear(superR);
+    mpf_clear(powToMul);
+    mpf_clear(poft);
+    mpf_clear(d);
+    mpf_clear(e);
+    mpf_clear(eCompare);
     return 0;
   }
 

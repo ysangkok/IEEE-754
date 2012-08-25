@@ -37,13 +37,6 @@ void prepend(char* s, const char* t)
 */
 }
 
-char* substr(const char* str, size_t begin, size_t len)
-{
-  if (str == 0 || strlen(str) == 0 || strlen(str) < begin || strlen(str) < (begin+len))
-    return 0;
-
-  return strndup(str + begin, len);
-} 
 //  main()
 //  -------------------------------------------------------------------
 /*  Command line arguments are three char[]s of digits:
@@ -310,6 +303,12 @@ char* substr(const char* str, size_t begin, size_t len)
     printf("%s\n", binary_integer_n);
     printf("%s\n", binary_fraction_n);
     printf("%d\n", binary_exponent_n);
+
+    mpf_clear(decf);
+    mpf_clear(powtwo);
+    mpz_clear(result);
+    mpz_clear(di);
+    mpz_clear(df);
 
     return 0;
   }

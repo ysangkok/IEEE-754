@@ -1,22 +1,3 @@
-<?php
-  date_default_timezone_set('America/New_York');
-  header("Vary: Accept");
-  if ( (array_key_exists("HTTP_ACCEPT", $_SERVER) &&
-        stristr($_SERVER["HTTP_ACCEPT"], "application/xhtml+xml"))
-       ||
-       (array_key_exists("HTTP_USER_AGENT", $_SERVER) &&
-        stristr($_SERVER["HTTP_USER_AGENT"], "W3C_Validator"))
-     )
-  {
-    header("Content-type: application/xhtml+xml");
-    header("Last-Modified: " . date('r',filemtime($_SERVER['SCRIPT_FILENAME'])));
-    print("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-  }
-  else
-  {
-    header("Content-type: text/html; charset=utf-8");
-  }
- ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
           "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -41,11 +22,37 @@
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="scripts/jquery.hotkeys.min.js"></script>
-    <script type="text/javascript" src="scripts/numeric_value.min.js"></script>
+<script>
+var resultDone = function(src, lines) {
+	if (src.indexOf("btd2.links.c") == -1) {
+		if (lines.length != 7) throw new Error("Wrong count for btd: " + lines.length);
+		btdCallback(lines);
+	} else {
+		if (lines.length != 10) throw new Error("Wrong count for dtb:" + lines.length);
+		dtbCallback(lines);
+	}
+}
+//$(document).ready(
+//(function() {
+//$("#ifrm1").contentWindow.document.getElementById("ifrm").src = "btd2.links.html";
+//$("#ifrm2").contentWindow.document.getElementById("ifrm").src = "dtb.links.html";
+
+window.btd = function(binary_integer, binary_exponent, binary_fraction, callback) {
+	$("#ifrm1")[0].contentWindow.call([binary_integer, binary_exponent, binary_fraction],10);
+	window.btdCallback = callback;
+};
+window.dtb = function(decimal_integer, decimal_exponent, decimal_fraction, decimal_recurrence, decimal_recurrence_start, callback) {
+	$("#ifrm2")[0].contentWindow.call([decimal_integer, decimal_exponent, decimal_fraction, decimal_recurrence, decimal_recurrence_start],7);
+	window.dtbCallback = callback;
+
+};
+//})();
+//);
+</script>
+    <script type="text/javascript" src="scripts/numeric_value.js"></script>
     <script type="text/javascript" src="scripts/analyzer.min.js"></script>
   </head>
   <body>
-
     <div id="message">
       <strong>
         January 18, 2012:
@@ -338,6 +345,10 @@
         </div>
         <button id="kill-this-analyzer" class="kill-this-analyzer" >Close This Analyzer</button>
       </div>
+<div>
+<iframe style="width: 100%" id="ifrm1" src="/war/janus_frame.php?frame=btd2.links.html"></iframe>
+<iframe style="width: 100%" id="ifrm2" src="/war/janus_frame.php?frame=dtb.links.html"></iframe>
+</div>
     </div>
   </body>
 </html>

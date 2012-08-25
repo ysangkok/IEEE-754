@@ -49,6 +49,22 @@ function objToString(obj)
   }
   return returnValue + '}';
 }
+
+function makeBtdResult(str) {
+var $result = str;
+//var $result = str.split("\n");
+  return {'di' : $result[0], 'df' : $result[1], 'de' : $result[2],
+                'dr' : $result[3], 'drs' : $result[4], 'br' : $result[5],
+                'brs' : $result[6], 'bi' : $result[7], 'bf' : $result[8], 'be' : $result[9]};
+}
+function makeDtbResult(str) {
+var $result = str;
+//var $result = str.split("\n");
+  return { 'di' : $result[0], 'df' : $result[1], 'de' : $result[2],
+                'dr' : $result[3], 'drs' : $result[4], 'br' : $result[5],
+                'brs' : $result[6], 'bi' : $result[7], 'bf' : $result[8], 'be' : $result[9]};
+}
+
 // get_JSON_DecValues_enhanced()
 // ---------------------------------------------------------------------------------------------
 /*
@@ -2549,8 +2565,9 @@ function Numeric_Value(input_string, parse_as, round_mode)
     // back to the originals
     binary_fraction = value.binary_fraction;
     binary_exponent = value.binary_exponent;
-    var JSONResults = get_JSON_DecValues_enhanced(binary_integer,
-        binary_exponent, binary_fraction);
+    btd(binary_integer.toString(),
+        binary_exponent.toString(), binary_fraction.toString(), function(lines) {
+var JSONResults = makeBtdResult(lines);
     value.decimal_integer = JSONResults.di;
     value.decimal_exponent = (JSONResults.de * 1);
     value.decimal_fraction = JSONResults.df;
@@ -2575,7 +2592,7 @@ function Numeric_Value(input_string, parse_as, round_mode)
     {
       value.binary_fraction = binfractemp;
     }
-    return;
+});
   };
   // gen_bin_from_dec_enhanced
   // -------------------------------------------------------------------------
@@ -2675,8 +2692,12 @@ function Numeric_Value(input_string, parse_as, round_mode)
       decimal_recurrence = "0";
     }
     decimal_recurrence_start = value.decimal_recurrence_start;
+/*
     var JSONResults = getJSONenhanced(decimal_integer, decimal_exponent,
         decimal_fraction, decimal_recurrence, decimal_recurrence_start);
+*/
+    dtb(decimal_integer.toString(), decimal_exponent.toString(),decimal_fraction.toString(), decimal_recurrence.toString(), decimal_recurrence_start.toString(), function(lines) {
+	var JSONResults = makeDtbResult(lines);
     value.binary_integer = JSONResults.bi;
     value.binary_exponent = (JSONResults.be * 1);
     value.binary_fraction = JSONResults.bf;
@@ -2692,7 +2713,7 @@ function Numeric_Value(input_string, parse_as, round_mode)
       value.binary_recurrence = '';
     }
     value.binary_recurrence_start = (JSONResults.brs * 1);
-    return;
+});
   };
   // Numeric_Value private instance functions
   // =============================================================================================
