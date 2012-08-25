@@ -1,4 +1,5 @@
 #!/bin/sh -ex
+rm *.txt || /bin/true
 #integer exponent fraction
 php computeDecConsole.php 1 0 10000000000000000000000
 php computeDecConsole.php 1 1023   1111111111111111111111111111111111111101111111111111

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <gmp.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -140,6 +141,7 @@ using namespace std;
 
     decimal_fraction = "0";
 
+    printf("binary_fraction pre-add: %s\n", binary_fraction.c_str());
     for (int i = binary_fraction.length() - 1; i > -1; i--)
     {
       //  if it is 1 add the decimal fraction to the power of two
@@ -149,6 +151,11 @@ using namespace std;
       }
       mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
     }
+
+
+    printf("df %s\n", mpz_get_str(NULL, 10, df));
+    printf("powtwo %s\n", mpz_get_str(NULL, 10, power_of_two));
+
 
     mpf_set_default_prec(1000);
     mpf_t decf;

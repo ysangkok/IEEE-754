@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 //#define BUF 16384
-#define BUF 1000
+#define BUF 5000
 
 char* repeat_char(const char c,const size_t n)
 {
@@ -174,6 +174,7 @@ char* substr(const char* str, size_t begin, size_t len)
     mpz_set_ui(di, 0);
 
     //printf("bin int len: %d\n", strlen(binary_integer));
+    int aa = 0, b = 0;
     for (int i = strlen(binary_integer) - 1; i > -1; i--)
     {
       //  if it's a 1 you add the decimal integer to the power of two (power of
@@ -181,9 +182,14 @@ char* substr(const char* str, size_t begin, size_t len)
       if (binary_integer[i] == '1')
       {
         mpz_add(di, di, power_of_two);
+        printf("di aa=%d %s\n", aa, mpz_get_str(NULL,10,di));
+	aa++;
       }
       mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
+      printf("power_of_two b=%d %s\n", b, mpz_get_str(NULL,10,power_of_two));
+      b++;
     }
+    printf("aa = %d\nb = %d\n",aa,b);
 
     //  Decimal fraction part
     //  reset the power_of_two back to 1
@@ -195,15 +201,23 @@ char* substr(const char* str, size_t begin, size_t len)
 
     strcpy(decimal_fraction, "0");
 
+    printf("binary_fraction pre-add: %s\n", binary_fraction);
+    int j = 0, k = 0;
     for (int i = strlen(binary_fraction) - 1; i > -1; i--)
     {
       //  if it is 1 add the decimal fraction to the power of two
       if (binary_fraction[i] == '1')
       {
+	j++;
         mpz_add(df, df, power_of_two);
       }
       mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
+      k++;
     }
+    printf("j = %d\nk = %d\n",j,k);
+
+    printf("df %s\n", mpz_get_str(NULL, 10, df));
+    printf("powtwo %s\n", mpz_get_str(NULL, 10, power_of_two));
 
     mpf_set_default_prec(1000);
     mpf_t decf;

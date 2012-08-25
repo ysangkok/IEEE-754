@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <gmp.h>
+#include <stdlib.h>
 
 using namespace std;
 
