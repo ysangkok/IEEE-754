@@ -10,6 +10,7 @@
 
 #include <gmp.h>
 
+mp_exp_t t = 4;
 using namespace std;
 
 map<int,mpf_t*> dfs_backing;
@@ -26,10 +27,14 @@ mpf_t* lazyget(int key) {
 	map<int,mpf_t*>::iterator it = dfs_backing.find(key);
 	mpf_t* valptr;
 	if (it==dfs_backing.end()) {
+//printf("making new for %d\n", key);
+
 		valptr = (mpf_t*) malloc(sizeof(mpf_t));
 		mpf_init(*valptr);
 		dfs_backing.insert(pair<int,mpf_t*>(key,valptr));
 	} else {
+//printf("found old for %d\n", key);
+
 		valptr = it->second;
 	}
 	return valptr;
@@ -117,9 +122,14 @@ mpf_t* lazyget(int key) {
       mpz_set(temp_dec, decimal_integer);
 
       mpz_tdiv_q_ui(result, decimal_integer, 2);
+      //printf("tdiv %s\n", mpz_get_str(NULL, 10, result));
+
       mpz_set(decimal_integer, result);
 
       mpz_mod_ui(result, temp_dec, 2);
+      //printf("mod %s\n", mpz_get_str(NULL, 10, result));
+
+
 
       if(mpz_cmp_d(result, 1)==0){//there is a remainder
         binary_integer = "1" + binary_integer;
@@ -142,6 +152,8 @@ mpf_t* lazyget(int key) {
 
     if (decimal_fraction.empty()) { decimal_fraction = "0"; }
 
+//printf("df %s\n", decimal_fraction.c_str());
+
     vector<string> decimal_fractions;
     decimal_fractions.push_back(decimal_fraction);
 
@@ -150,9 +162,16 @@ mpf_t* lazyget(int key) {
     string sum;
 
     mpf_set_default_prec(20000);
+//printf("str df %s\n", decimal_fraction.c_str());
     mpf_t df;
     mpf_init(df);
-    mpf_set_str(df, ("0." + decimal_fraction).c_str(), 10);
+const char* tempcstr = ("0." + decimal_fraction).c_str();
+ //printf("str df %s\n", tempcstr);
+
+
+    mpf_set_str(df, tempcstr, 10);
+ //printf("df 18 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
 
     mpf_t temp_df;
     mpf_init(temp_df);
@@ -202,7 +221,13 @@ mpf_t* lazyget(int key) {
       mpf_set(*tmp, df);
     }
     a++;
+ //printf("df 16 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
+
     mpf_add(df, df, df);
+ //printf("df 15 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
+
     mpf_t poft; //  this is the power of ten variable, only used when there are
                 //  decimal recurrences
     mpf_init(poft);
@@ -250,6 +275,9 @@ mpf_t* lazyget(int key) {
       //so do this only for recurring numbers
       if (decimal_recurrence_start == 0)
       {
+ //printf("df 11 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
+
         if (mpf_cmp(df, eCompare) >= 0)
         {
           mpf_add(df, df, poft);
@@ -257,11 +285,15 @@ mpf_t* lazyget(int key) {
         else
         {
         }
+ //printf("df 12 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
+
       }
       else
       {
         mpf_set(superR, df);
         mpf_mul(superR, superR, powToMul);
+
         superRL = mpf_get_ui(superR); // this should do away with the decimal
                                       // stuff leaving just the numbers to the
                                       // left of the decimal point
@@ -272,10 +304,15 @@ mpf_t* lazyget(int key) {
         {
           rArr[rac] = rArr[rac] + 1; // add one to the value in the array
           mpf_add(df, df, poft);
+ //printf("df 8 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
+
         }
         rac++;
       }
     }
+ //printf("df 10 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
 
     int j = 0;
    	int limit = 0;
@@ -285,10 +322,12 @@ mpf_t* lazyget(int key) {
     {
       mpf_set(dr_temp, df);
       mpf_set(temp_df, df);
+ //printf("df 9 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
 
       if (mpf_cmp_ui(temp_df, 1) >= 0)
       {
         mpf_sub_ui(temp_df, temp_df, 1);
+      //printf("temp_df %s\n", mpf_get_str(NULL, &t, 10, 120, temp_df));
       }
 
       for (int i = 0; i < a; i++)
@@ -307,6 +346,9 @@ mpf_t* lazyget(int key) {
       {
         binary_fraction = binary_fraction + "1";
         mpf_sub_ui(df, df, 1);
+ //printf("df 1 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
+
 	{
 		mpf_t* tmp = lazyget(a);
         	mpf_set(*tmp, df);
@@ -322,8 +364,12 @@ mpf_t* lazyget(int key) {
 	}
         a++;
       }
+ //printf("df 2 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
 
       mpf_add(df, df, df);
+ //printf("df 3 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
 
       if (decimal_recurrence_start> -1)
       {
@@ -335,10 +381,16 @@ mpf_t* lazyget(int key) {
           if (mpf_cmp(df, eCompare) >= 0)
           {
             mpf_add(df, df, poft);
+ //printf("df 4 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
+
           }
           else if (a == b)
           {
             mpf_add(df, df, poft);
+ //printf("df 5 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
+
           }
           else
           {
@@ -358,13 +410,21 @@ mpf_t* lazyget(int key) {
           {
             rArr[rac] = rArr[rac] + 1; //add one to the value in the array
             mpf_add(df, df, poft);
+ //printf("df 7 %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
+
           }
           rac++;
         }
       }
 
+
+      //printf("df %s\n", mpf_get_str(NULL, &t, 10, 120, df));
+
       if (mpf_cmp_ui(df, 0)==0)
       {
+	//printf("df = 0 break\n");
+
         break;
       }
       j++;
@@ -380,7 +440,11 @@ mpf_t* lazyget(int key) {
 			}
 		}
 	  }
+//printf("bf %s\n", binary_fraction.c_str());
+
      if(j == limit && limitOK ==true){
+//printf("limit break\n");
+
 		break;
 	 }
     } //end of while

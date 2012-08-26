@@ -25,17 +25,11 @@ void prepend(char* s, const char* t)
 {
     size_t len = strlen(t);
 
-    memmove(s + len, s, len + 1);
+    memmove(s + len, s, strlen(s)+1);
 
     memcpy(s,t,len);
-/*
-    size_t i;
-    for (i = 0; i < len; ++i)
-    {
-        s[i] = t[i];
-    }
-*/
 }
+
 
 //  main()
 //  -------------------------------------------------------------------
