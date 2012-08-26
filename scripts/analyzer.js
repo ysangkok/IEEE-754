@@ -1,3 +1,4 @@
+"use strict";
 /*    This script implements the arithmetic and UI functions of the IEEE-754 analyzers.  For
  *    accuracy, arithmetic is done on strings rather than on JavaScript numbers.
  */
@@ -403,40 +404,7 @@ $().ready(function()
         endianMode = 'littleEndian';
       }
       var value = null;
-      if (analyzer.force_auto.checked)
-      {
-        value = new Numeric_Value(analyzer.value_entered.value, undefined, roundMode);
-      }
-      if (analyzer.force_decimal.checked)
-      {
-        value = new Numeric_Value(analyzer.value_entered.value, 10, roundMode);
-      }
-      if (analyzer.force_binary.checked)
-      {
-        value = new Numeric_Value(analyzer.value_entered.value, 2, roundMode);
-      }
-      if (analyzer.force_hexadecimal.checked)
-      {
-        //  Perform input endian-reversal here if requested.
-        var value_entered_copy = analyzer.value_entered.value;
-        if (endianMode === 'littleEndian' && (value_entered_copy.length % 2 === 0))
-        {
-          //  Reverse byte order
-          var reversed = [];
-          var num_bytes = value_entered_copy.length / 2;
-          for (var i = 0; i < num_bytes; i++)
-          {
-            reversed[i + i]     = value_entered_copy[num_bytes + num_bytes - (2 + i + i)];
-            reversed[i + i + 1] = value_entered_copy[num_bytes + num_bytes - (2 + i + i) + 1];
-          }
-          value_entered_copy = reversed.join('');
-        }
-        value = new Numeric_Value(value_entered_copy, 16, roundMode);
-        if (endianMode === 'littleEndian')
-        {
-          value.syntax += ' (little endian)';
-        }
-      }
+      var cb = function(value) {
       analyzer.syntax_message.nodeValue = value.syntax;
       if (value.isValid)
       {
@@ -655,6 +623,43 @@ $().ready(function()
         analyzerDiv.className = 'analyzer block';
       }
       $('.loading').removeClass('computing').addClass('idle');
+      };
+      if (analyzer.force_auto.checked)
+      {
+        new Numeric_Value(analyzer.value_entered.value, undefined, roundMode, cb);
+      }
+      if (analyzer.force_decimal.checked)
+      {
+        new Numeric_Value(analyzer.value_entered.value, 10, roundMode, cb);
+      }
+      if (analyzer.force_binary.checked)
+      {
+        new Numeric_Value(analyzer.value_entered.value, 2, roundMode, cb);
+      }
+      if (analyzer.force_hexadecimal.checked)
+      {
+        //  Perform input endian-reversal here if requested.
+        var value_entered_copy = analyzer.value_entered.value;
+        if (endianMode === 'littleEndian' && (value_entered_copy.length % 2 === 0))
+        {
+          //  Reverse byte order
+          var reversed = [];
+          var num_bytes = value_entered_copy.length / 2;
+          for (var i = 0; i < num_bytes; i++)
+          {
+            reversed[i + i]     = value_entered_copy[num_bytes + num_bytes - (2 + i + i)];
+            reversed[i + i + 1] = value_entered_copy[num_bytes + num_bytes - (2 + i + i) + 1];
+          }
+          value_entered_copy = reversed.join('');
+        }
+        new Numeric_Value(value_entered_copy, 16, roundMode, function(value) {
+          if (endianMode === 'littleEndian')
+          {
+            value.syntax += ' (little endian)';
+          }
+          cb(value);
+        });
+      }
     }
   }
   // clickHandler()

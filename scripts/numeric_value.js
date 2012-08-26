@@ -1,3 +1,4 @@
+"use strict";
 /*    A Numeric_Value can be constructed from a string given in any of the following formats:
  *
  *      A decimal real number; scientific notation allowed.
@@ -50,14 +51,14 @@ function objToString(obj)
   return returnValue + '}';
 }
 
-function makeBtdResult(str) {
+function makeDtbResult(str) {
 var $result = str;
 //var $result = str.split("\n");
-  return {'di' : $result[0], 'df' : $result[1], 'de' : $result[2],
-                'dr' : $result[3], 'drs' : $result[4], 'br' : $result[5],
-                'brs' : $result[6], 'bi' : $result[7], 'bf' : $result[8], 'be' : $result[9]};
+  return { 'bi' :  $result[0], 'bf' :  $result[1], 'be' :  $result[2], 
+                'dr' :  $result[3], 'drs' :  $result[4], 'br' :  $result[5], 
+                'brs' :  $result[6]};
 }
-function makeDtbResult(str) {
+function makeBtdResult(str) {
 var $result = str;
 //var $result = str.split("\n");
   return { 'di' : $result[0], 'df' : $result[1], 'de' : $result[2],
@@ -156,13 +157,8 @@ function getJSON(decimal_integer)
 
 // Numeric_Value
 // ===============================================================================================
-function Numeric_Value(input_string, parse_as, round_mode)
+function Numeric_Value(input_string, parse_as, round_mode, nvcb)
 {
-  if (DEBUG)
-  {
-    console.log('Numeric_Value( ' + input_string + ', ' + parse_as + ' )');
-    debug_depth = 0;
-  }
   // Numeric_Value private static data
   // =============================================================================================
   //
@@ -194,11 +190,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
    */
   var prepArgs = function()
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'prepArgs(' + arguments[0]
-          + ', ' + arguments[1] + ')');
-    }
     if (arguments.length !== 2 || arguments[0] === '' || arguments[1] === '')
     {
       throw 'prepArgs: missing or empty argument(s)';
@@ -235,11 +226,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
       result.arg1.unshift(arg1.charAt(i) - 0);
       result.arg2.unshift(arg2.charAt(i) - 0);
     }
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--] + 'prepArgs returns '
-          + objToString(result));
-    }
     return result;
   };
 
@@ -250,18 +236,10 @@ function Numeric_Value(input_string, parse_as, round_mode)
    */
   var ltrim = function(arg)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'ltrim(' + arg + ')');
-    }
     var result = arg;
     while ((result.length > 1) && result.charAt(0) === '0')
     {
       result = result.substr(1);
-    }
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--] + 'ltrim returns ' + result);
     }
     return result;
   };
@@ -273,11 +251,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
    */
   var compare = function(arg1, arg2)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'compare(' + arg1 + ', ' + arg2
-          + ')');
-    }
     var a = arg1;
     var b = arg2;
     var sign_a = '+';
@@ -297,16 +270,8 @@ function Numeric_Value(input_string, parse_as, round_mode)
       case '++':
         break;
       case '+-':
-        if (DEBUG)
-        {
-          console.log(debug_spaces[debug_depth--] + 'compare returns +1');
-        }
         return +1;
       case '-+':
-        if (DEBUG)
-        {
-          console.log(debug_spaces[debug_depth--] + 'compare returns -1');
-        }
         return -1;
       case '--':
         var t = a;
@@ -318,11 +283,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
     }
     a = ltrim(a);
     b = ltrim(b);
-    if (DEBUG)
-    {
-      console
-          .log(debug_spaces[debug_depth--] + 'compare will return something');
-    }
     if (a.length > b.length)
     {
       return +1;
@@ -355,11 +315,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
    */
   var decimal_subtract = function(arg1, arg2, trim)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'decimal_subtract(' + arg1
-          + ', ' + arg2 + ', ' + trim + ')');
-    }
     var arrays = prepArgs(arg1, arg2);
     var subtrahend = arrays.arg1;
     var minuend = arrays.arg2;
@@ -382,11 +337,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
       }
       diff = String.fromCharCode(48 + digit_diff).concat(diff);
     }
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--] + 'decimal_subtract returns '
-          + (trim ? ltrim(diff) : diff));
-    }
     if (trim)
     {
       return ltrim(diff);
@@ -401,11 +351,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
    */
   var decimal_add = function(arg1, arg2, trim)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'decimal_add(' + arg1 + ', '
-          + arg2 + ', ' + trim + ')');
-    }
     var values = prepArgs(arg1, arg2);
     var augend = values.arg1;
     var addend = values.arg2;
@@ -431,11 +376,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
         diff = decimal_subtract(arg2, arg1, trim);
         diff = values.sign2.concat(diff);
       }
-      if (DEBUG)
-      {
-        console
-            .log(debug_spaces[debug_depth--] + 'decimal_add returns ' + diff);
-      }
       return diff;
     }
     // It's addition
@@ -456,11 +396,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
       sum = String.fromCharCode(48 + digit_sum).concat(sum);
     }
     sum = String.fromCharCode(48 + carry).concat(sum);
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--] + 'decimal_add returns '
-          + (trim ? ltrim(sum) : sum));
-    }
     return (trim ? ltrim(sum) : sum);
   };
 
@@ -491,11 +426,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
    */
   var decimal_divide = function(arg1, arg2, DECIMAL_PRECISION)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'decimal_divide(' + arg1 + ', '
-          + arg2 + ', ' + DECIMAL_PRECISION + ')');
-    }
     var result =
     {
       isNegative : false,
@@ -530,11 +460,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
     if (compare(divisor, '0') === 0)
     {
       result.isInfinity = true;
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--]
-            + 'decimal_divide returns inifinity');
-      }
       return result;
     }
     // Result less than 1?
@@ -659,11 +584,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
         dividend_index++;
       }
     }
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--] + 'decimal_divide returns '
-          + objToString(result));
-    }
     return result;
   };
 
@@ -671,11 +591,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
   // ---------------------------------------------------------------------------
   var decimal_divide2 = function(arg1, arg2, DECIMAL_PRECISION)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'decimal_divide(' + arg1 + ', '
-          + arg2 + ', ' + DECIMAL_PRECISION + ')');
-    }
     var result =
     {
       isNegative : false,
@@ -708,11 +623,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
     if (compare(divisor, '0') === 0)
     {
       result.isInfinity = true;
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--]
-            + 'decimal_divide returns inifinity');
-      }
       return result;
     }
     // Result less than 1?
@@ -783,11 +693,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
       remainders.push(remainder);
       dividend_index++;
     }
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--] + 'decimal_divide returns '
-          + objToString(result));
-    }
     return result;
   };
 
@@ -796,7 +701,7 @@ function Numeric_Value(input_string, parse_as, round_mode)
   /*
    * Performs an IEEE-754 analysis of a numeric value.
    */
-  var analyze = function(value)
+  var analyze = function(value,cb)
   {
     if (value.isNaN)
     {
@@ -997,6 +902,7 @@ function Numeric_Value(input_string, parse_as, round_mode)
     value.hex_String32      = convertToHex(value, 32);
     value.hex_String64      = convertToHex(value, 64);
     value.hex_String128     = convertToHex(value, 128);
+    cb();
   };
 
   // adjustFractionBits()
@@ -2229,12 +2135,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
         && value.binary_exponent === 0)
     {
       value.isZero = true;
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--] + 'gen_dec_from_bin returns '
-            + value.decimal_integer + '.' + value.decimal_fraction + 'E'
-            + value.decimal_exponent);
-      }
       return;
     }
     // Shift msb to units position, adjusting exponent.
@@ -2400,12 +2300,6 @@ function Numeric_Value(input_string, parse_as, round_mode)
       value.binary_integer = '0';
       value.binary_fraction = '0';
       value.binary_exponent = 0;
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--] + 'gen_bin_from_dec returns '
-            + value.binary_integer + '.' + value.binary_fraction + 'E'
-            + value.binary_exponent);
-      }
       return;
     }
     // Create working copy of the decimal value
@@ -2487,26 +2381,14 @@ function Numeric_Value(input_string, parse_as, round_mode)
   /*
    * Generates a decimal number from a binary number
    */
-  var gen_dec_from_bin_enhanced = function(value)
+  var gen_dec_from_bin_enhanced = function(value, cbbb2)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'gen_dec_from_bin: '
-          + value.binary_integer + '.' + value.binary_fraction + 'E'
-          + value.binary_exponent);
-    }
     // Normalize the number, unless it is zero
     // Test if the value is zero and set value.isZero if it is.
     if (value.binary_integer === '0' && value.binary_fraction === '0'
         && value.binary_exponent === 0)
     {
       value.isZero = true;
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--] + 'gen_dec_from_bin returns '
-            + value.decimal_integer + '.' + value.decimal_fraction + 'E'
-            + value.decimal_exponent);
-      }
       return;
     }
     // Create working copy of the decimal value
@@ -2565,9 +2447,8 @@ function Numeric_Value(input_string, parse_as, round_mode)
     // back to the originals
     binary_fraction = value.binary_fraction;
     binary_exponent = value.binary_exponent;
-    btd(binary_integer.toString(),
-        binary_exponent.toString(), binary_fraction.toString(), function(lines) {
-var JSONResults = makeBtdResult(lines);
+    var btd_callback = function(lines) {
+    var JSONResults = makeBtdResult(lines);
     value.decimal_integer = JSONResults.di;
     value.decimal_exponent = (JSONResults.de * 1);
     value.decimal_fraction = JSONResults.df;
@@ -2592,21 +2473,17 @@ var JSONResults = makeBtdResult(lines);
     {
       value.binary_fraction = binfractemp;
     }
-});
+    cbbb2();
+    };
+    btd(binary_integer.toString(), binary_exponent.toString(), binary_fraction.toString(), btd_callback);
   };
   // gen_bin_from_dec_enhanced
   // -------------------------------------------------------------------------
   /*
    * Generates a binary number from a decimal number
    */
-  var gen_bin_from_dec_enhanced = function(value)
+  var gen_bin_from_dec_enhanced = function(value, cbbb)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'gen_bin_from_dec: '
-          + value.decimal_integer + '.' + value.decimal_fraction + 'E'
-          + value.decimal_exponent);
-    }
     // Special case if the value is zero
     if (value.decimal_integer === '0' && value.decimal_fraction === '0'
         && value.decimal_exponent === 0)
@@ -2615,12 +2492,6 @@ var JSONResults = makeBtdResult(lines);
       value.binary_integer = '0';
       value.binary_fraction = '0';
       value.binary_exponent = 0;
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--] + 'gen_bin_from_dec returns '
-            + value.binary_integer + '.' + value.binary_fraction + 'E'
-            + value.binary_exponent);
-      }
       return;
     }
     // Create working copy of the decimal value
@@ -2686,18 +2557,19 @@ var JSONResults = makeBtdResult(lines);
     // back to the originals
     decimal_fraction = value.decimal_fraction;
     decimal_exponent = value.decimal_exponent;
-    decimal_recurrence = value.decimal_recurrence;
+    window.decimal_recurrence = value.decimal_recurrence; // TODO REALLY window?
     if (decimal_recurrence == "")
     {
       decimal_recurrence = "0";
     }
-    decimal_recurrence_start = value.decimal_recurrence_start;
+    window.decimal_recurrence_start = value.decimal_recurrence_start;
 /*
     var JSONResults = getJSONenhanced(decimal_integer, decimal_exponent,
         decimal_fraction, decimal_recurrence, decimal_recurrence_start);
 */
-    dtb(decimal_integer.toString(), decimal_exponent.toString(),decimal_fraction.toString(), decimal_recurrence.toString(), decimal_recurrence_start.toString(), function(lines) {
-	var JSONResults = makeDtbResult(lines);
+    
+    var callback_dtb = function(lines) {
+    var JSONResults = makeDtbResult(lines);
     value.binary_integer = JSONResults.bi;
     value.binary_exponent = (JSONResults.be * 1);
     value.binary_fraction = JSONResults.bf;
@@ -2713,7 +2585,9 @@ var JSONResults = makeBtdResult(lines);
       value.binary_recurrence = '';
     }
     value.binary_recurrence_start = (JSONResults.brs * 1);
-});
+    };
+    dtb(decimal_integer.toString(), decimal_exponent.toString(),decimal_fraction.toString(), decimal_recurrence.toString(), decimal_recurrence_start.toString(), callback_dtb);
+    cbbb();
   };
   // Numeric_Value private instance functions
   // =============================================================================================
@@ -2723,25 +2597,16 @@ var JSONResults = makeBtdResult(lines);
   /*
    * Guesses the input format: mixed and real preferred to binary.
    */
-  this.parse_auto = function(input_string)
+  this.parse_auto = function(input_string, g2)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'parse_auto( ' + input_string
-          + ' )');
-    }
     // check to see if it is a mixed number
-    regexInfo = mixedRE.exec(input_string);
+    window.regexInfo = mixedRE.exec(input_string); // TODO really window?
     if (regexInfo)
     {
       this.inputType = 'mixed';
       this.parseAs = 10;
-      this.parse_mixed(regexInfo);
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--]
-            + 'parse_auto returns parse_mixed()');
-      }
+      this.parse_mixed(regexInfo, g2);
+      g2();
       return;
     }
     // if it's not a mixed number then check if it is a real number
@@ -2750,24 +2615,14 @@ var JSONResults = makeBtdResult(lines);
     {
       this.inputType = 'real';
       this.parseAs = 10;
-      this.parse_real(regexInfo);
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--]
-            + 'parse_auto returns parse_real()');
-      }
+      this.parse_real(regexInfo, g2);
       return;
     }
     // if binary call parse binary
     if (binRE.test(input_string))
     {
       this.parseAs = 2;
-      this.parse_binary(input_string);
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--]
-            + 'parse_auto returns parse_binary()');
-      }
+      this.parse_binary(input_string, g2);
       return;
     }
     // if hexadecimal call parse hexadecimal
@@ -2775,21 +2630,12 @@ var JSONResults = makeBtdResult(lines);
         || hex128RE.test(input_string))
     {
       this.parseAs = 16;
-      this.parse_hexadecimal(input_string);
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--]
-            + 'parse_auto returns parse_hexadecimal()');
-      }
+      this.parse_hexadecimal(input_string, g2);
       return;
     }
     // if special value call that function
     this.checkSpecialValue(input_string);
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--]
-          + 'parse_auto returns checkSpecialValue()');
-    }
+    g2();
     return;
   };
   // parse_decimal()
@@ -2797,23 +2643,14 @@ var JSONResults = makeBtdResult(lines);
   /*
    * Disambiguate between real and mixed.
    */
-  this.parse_decimal = function(input_string)
+  this.parse_decimal = function(input_string, g1)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'parse_decimal( '
-          + input_string + ' )');
-    }
     var regexInfo = mixedRE.exec(input_string);// if it is a mixed number call
     // parse mixed
     if (regexInfo)
     {
       this.inputType = 'mixed';
-      this.parse_mixed(regexInfo);
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--] + 'parse_decimal returns parse_mixed()');
-      }
+      this.parse_mixed(regexInfo, g1);
       return;
     }
     regexInfo = realRE.exec(input_string);// if it is not a mixed number check
@@ -2821,21 +2658,14 @@ var JSONResults = makeBtdResult(lines);
     if (regexInfo)
     {
       this.inputType = 'real';
-      this.parse_real(regexInfo);
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--] + 'parse_decimal returns parse_real()');
-      }
+      this.parse_real(regexInfo,g1);
       return;
     }
     else
     {
       this.syntax = 'Invalid decimal number';
     }
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--] + 'parse_decimal returns ' + this.isValid);
-    }
+    g1();
     return;
   };
   // parse_mixed()
@@ -2856,13 +2686,8 @@ var JSONResults = makeBtdResult(lines);
    * denominator. Divide; add integer part to whole number; save decimal
    * fraction. Use gen_bin_from_dec to generate binary parts.
    */
-  this.parse_mixed = function(mixed_info)
+  this.parse_mixed = function(mixed_info, guuu)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'parse_mixed( '
-          + objToString(mixed_info) + ' )');
-    }
     this.isValid = false;
     var value_sign = mixed_info[1] ? mixed_info[1] : '+';
     // check the first (left most) value to see if it is a sign, if there is none value_sign becomes
@@ -2953,14 +2778,9 @@ var JSONResults = makeBtdResult(lines);
     }
     this.isValid = true;
     this.syntax = "Decimal number";
-    gen_bin_from_dec_enhanced(this);
-    analyze(this);
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--] + 'parse_mixed returns '
-          + objToString(this));
-    }
-    return;
+    gen_bin_from_dec_enhanced(this, function() {
+    analyze(this, guuu);
+    });
   };
   // parse_real()
   // ---------------------------------------------------------------------------------------------
@@ -2968,13 +2788,8 @@ var JSONResults = makeBtdResult(lines);
    * Parse real numbers. Decimal recurrences not possible. Can only be reached
    * if an input string has been recognized as a valid real number string.
    */
-  this.parse_real = function(real_info)
+  this.parse_real = function(real_info, cb)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'parse_real( '
-          + objToString(real_info) + ' )');
-    }
     this.isNegative = (typeof real_info[1] !== 'undefined')
         && (real_info[1] === '-');
     this.decimal_integer = real_info[2] ? ltrim(real_info[2]) : '0';
@@ -2991,42 +2806,29 @@ var JSONResults = makeBtdResult(lines);
       this.decimal_exponent = 0;
       this.isZero = true;
       this.isValid = true;
+      cb();
       return;
     }
-    gen_bin_from_dec_enhanced(this);
-    this.isValid = true;
-    analyze(this);
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--] + 'parse_real returns '
-          + objToString(this));
-    }
-    return;
+    gen_bin_from_dec_enhanced(this, function() {
+    outer.isValid = true;
+    analyze(outer, cb);
+    });
   };
   // parse_binary()
   // ---------------------------------------------------------------------------------------------
   /*
    * Parse binary numbers.
    */
-  this.parse_binary = function(input_string)
+  this.parse_binary = function(input_string, bincb)
   {
     this.inputType = 'binary';
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'parse_binary( ' + input_string
-          + ' )');
-    }
     var matches = binRE.exec(input_string);
     // matches will either be the string if it matches or null
     if (null === matches)
     {
       this.syntax = 'Invalid binary number';
       this.isValid = false;
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--]
-            + 'parse_binary returns \'invalid binary\'');
-      }
+      bincb();
       return;
     }
     this.isNegative = (typeof matches[1] !== 'undefined')
@@ -3048,6 +2850,7 @@ var JSONResults = makeBtdResult(lines);
       this.decimal_exponent = 0;
       this.isZero = true;
       this.isValid = true;
+      bincb();
       return;
     }
     if (this.binary_integer === '0' && this.binary_fraction === '1'
@@ -3064,15 +2867,10 @@ var JSONResults = makeBtdResult(lines);
       this.binary_fraction = '0';
       this.binary_exponent = 0;
     }
-    gen_dec_from_bin_enhanced(this);
-    this.isValid = true;
-    analyze(this);
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--] + 'parse_binary returns '
-          + objToString(this));
-    }
-    return;
+    gen_dec_from_bin_enhanced(this, function() {
+    outer.isValid = true;
+    analyze(outer, bincb);
+    });
   };
   // convertToHex()
   // -----------------------------------------------------------------------------------------------
@@ -3375,23 +3173,15 @@ var JSONResults = makeBtdResult(lines);
    * and is used here. User selectable: roundTowardPositive roundTowardNegative
    * roundTowardZero The first two may result in +∞ and -∞, respectively.
    */
-  this.parse_hexadecimal = function(input_string)
+  var outer = this;
+  this.parse_hexadecimal = function(input_string, hexcb)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'parse_hexadecimal( '
-          + input_string + ' )');
-    }
     this.isValid = false;
     // must match the regular expression for hexadecimal format or fail
     if (!/^[\da-f]+$/i.test(input_string))
     {
       this.syntax = 'Invalid hexadecimal';
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--]
-            + 'parse_hexadecimal returns \'invalid hex char(s)\'');
-      }
+      hexcb();
       return;
     }
     // must be the correct length of one of the 3 type of floating point numbers
@@ -3402,11 +3192,7 @@ var JSONResults = makeBtdResult(lines);
     {
       this.syntax = 'Invalid number of hexadecimal digits ('
           + input_string.length + ')';
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--]
-            + 'parse_hexadecimal returns \'invalid hex length\'');
-      }
+      hexcb();
       return;
     }
     // Any hex string of a proper length must be valid
@@ -3468,11 +3254,7 @@ var JSONResults = makeBtdResult(lines);
           break;
         default:
           this.syntax = 'IEEE invalid hex character: ' + hex_val;
-          if (DEBUG)
-          {
-            console.log(debug_spaces[debug_depth--]
-                + 'parse_hexadecimal returns invalid hex char');
-          }
+	  hexcb();
           return;
       }
       // Use the hex_value as a key into the hex_array to get the appropriate binary value
@@ -3511,11 +3293,7 @@ var JSONResults = makeBtdResult(lines);
         this.decimal_integer = '0';
         this.decimal_fraction = '0';
         this.decimal_exponent = 0;
-        if (DEBUG)
-        {
-          console.log(debug_spaces[debug_depth--]
-              + 'parse_hexadecimal returns \'zero\'');
-        }
+	hexcb();
         return;
       }
       // Confirm it is a subnormal number
@@ -3525,13 +3303,9 @@ var JSONResults = makeBtdResult(lines);
       this.isIEEESubnormal = true;
 
       //  Generate corresponding decimal value, and do the analysis
-      gen_dec_from_bin_enhanced(this);
-      analyze(this);
-      if (DEBUG)
-      {
-        console.log(debug_spaces[debug_depth--]
-            + 'parse_hexadecimal returns \'subnormal\'');
-      }
+      gen_dec_from_bin_enhanced(this, function() {
+      analyze(this, hexcb);
+      });
       return;
     }
     // Infinity?
@@ -3553,11 +3327,7 @@ var JSONResults = makeBtdResult(lines);
         {
           this.syntax = '128-bit hexadecimal';
         }
-        if (DEBUG)
-        {
-          console.log(debug_spaces[debug_depth--]
-              + 'parse_hexadecimal returns \'infinity\'');
-        }
+	hexcb();
         return;
       }
       // this confirms the number is NAN
@@ -3578,15 +3348,10 @@ var JSONResults = makeBtdResult(lines);
         {
           this.syntax = '128-bit hexadecimal';
         }
-        if (DEBUG)
-        {
-          console.log(debug_spaces[debug_depth--]
-              + 'parse_hexadecimal returns \'NaN\'');
-        }
         this.binary_integer = '1'; // hidden bit
         this.binary_fraction = raw_fraction;
         this.binary_exponent = eval_bin(raw_exponent) - Emax;
-        analyze(this);
+        analyze(this, hexcb);
         return;
       }
     }
@@ -3607,14 +3372,9 @@ var JSONResults = makeBtdResult(lines);
     {
       this.syntax = '128-bit hexadecimal';
     }
-    gen_dec_from_bin_enhanced(this);
-    analyze(this);
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--]
-          + 'parse_hexadecimal returns \'normal\'');
-    }
-    return;
+    gen_dec_from_bin_enhanced(outer, function() {
+    analyze(outer, hexcb);
+    });
   };
   // checkSpecialValue()
   // -------------------------------------------------------------------------
@@ -3623,11 +3383,6 @@ var JSONResults = makeBtdResult(lines);
    */
   this.checkSpecialValue = function(input_string)
   {
-    if (DEBUG)
-    {
-      console.log(debug_spaces[++debug_depth] + 'checkSpecialValue( '
-          + input_string + ' )');
-    }
     switch (input_string.toLowerCase())
     {
       case '+infinity':
@@ -3660,11 +3415,6 @@ var JSONResults = makeBtdResult(lines);
         this.syntax = 'Unrecognized input';
         this.isValid = false;
         break;
-    }
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--] + 'checkSpecialValue returns '
-          + objToString(this));
     }
     return;
   };
@@ -3738,25 +3488,24 @@ var JSONResults = makeBtdResult(lines);
   this.parseAs = parse_as;
   this.inputType = '';
   this.isIEEESubnormal = false;
+  var vcb = function(x) {
+	nvcb(outer);
+  };
   if (typeof parse_as === "undefined")
   {
-    this.parse_auto(input_string);
-    if (DEBUG)
-    {
-      console.log('constructor returns ' + objToString(this));
-    }
+    this.parse_auto(input_string, vcb);
     return;
   }
   switch (parse_as)
   {
     case 2:
-      this.parse_binary(input_string);
+      this.parse_binary(input_string, vcb);
       break;
     case 10:
-      this.parse_decimal(input_string);
+      this.parse_decimal(input_string, vcb);
       break;
     case 16:
-      this.parse_hexadecimal(input_string);
+      this.parse_hexadecimal(input_string, vcb);
       break;
     default:
       alert("Numeric_Value: " + parse_as + " is an invalid constructor value");
@@ -3816,11 +3565,6 @@ Numeric_Value.prototype.getSyntax = function()
  */
 Numeric_Value.prototype.toString = function(radix)
 {
-  if (DEBUG)
-  {
-    console.log(debug_spaces[++debug_depth] + 'Numeric_Value.toString(' + radix
-        + ')');
-  }
   if (!this.isValid)
   {
     return 'Not a recognized number';
@@ -4143,10 +3887,6 @@ Numeric_Value.prototype.toString = function(radix)
   if (this.isZero && (radix === 2 || radix === 10))
   {
     returnValue += '0.0';
-    if (DEBUG)
-    {
-      console.log(debug_spaces[debug_depth--] + 'return zero');
-    }
     return returnValue;
   }
   if ((typeof radix !== "undefined") && (radix === 2))

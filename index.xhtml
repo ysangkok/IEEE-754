@@ -24,12 +24,13 @@
     <script type="text/javascript" src="scripts/jquery.hotkeys.min.js"></script>
 <script>
 var resultDone = function(src, lines) {
-	if (src.indexOf("btd2.links.c") == -1) {
-		if (lines.length != 7) throw new Error("Wrong count for btd: " + lines.length);
-		btdCallback(lines);
-	} else {
-		if (lines.length != 10) throw new Error("Wrong count for dtb:" + lines.length);
+	console.log(lines);
+	if (src.indexOf("btd") == -1) {
+		if (lines.length != 7) throw new Error("Wrong count for dtb: " + lines.length);
 		dtbCallback(lines);
+	} else {
+		if (lines.length != 10) throw new Error("Wrong count for btd:" + lines.length);
+		btdCallback(lines);
 	}
 }
 //$(document).ready(
@@ -50,7 +51,7 @@ window.dtb = function(decimal_integer, decimal_exponent, decimal_fraction, decim
 //);
 </script>
     <script type="text/javascript" src="scripts/numeric_value.js"></script>
-    <script type="text/javascript" src="scripts/analyzer.min.js"></script>
+    <script type="text/javascript" src="scripts/analyzer.js"></script>
   </head>
   <body>
     <div id="message">

@@ -86,6 +86,7 @@ mpf_t* lazyget(int key) {
     strncpy(decimal_recurrence, argv[4], BUF-1);
     if (strlen(decimal_recurrence) == BUF-1) abort();
     decimal_recurrence_start = atoi(argv[5]);
+//printf("drs %d\n", decimal_recurrence_start);
 
     mpz_t result;
     mpz_init(result);
