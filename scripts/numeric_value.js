@@ -1,4 +1,51 @@
 "use strict";
+function def(obj) {
+// object.watch
+if (!Object.prototype.watch) {
+	Object.defineProperty(Object.prototype, "watch", {
+		  enumerable: false
+		, configurable: true
+		, writable: false
+		, value: function (prop, handler) {
+			var
+			  oldval = obj[prop]
+			, newval = oldval
+			, getter = function () {
+				return newval;
+			}
+			, setter = function (val) {
+				oldval = newval;
+				return newval = handler.call(obj, prop, oldval, val);
+			}
+			;
+
+			if (delete obj[prop]) { // can't watch constants
+				Object.defineProperty(obj, prop, {
+					  get: getter
+					, set: setter
+					, enumerable: true
+					, configurable: true
+				});
+			}
+		}
+	});
+}
+
+// object.unwatch
+if (!Object.prototype.unwatch) {
+	Object.defineProperty(Object.prototype, "unwatch", {
+		  enumerable: false
+		, configurable: true
+		, writable: false
+		, value: function (prop) {
+			var val = obj[prop];
+			delete obj[prop]; // remove accessors
+			obj[prop] = val;
+		}
+	});
+}
+}
+
 /*    A Numeric_Value can be constructed from a string given in any of the following formats:
  *
  *      A decimal real number; scientific notation allowed.
@@ -32,6 +79,14 @@ if (typeof opera !== 'undefined')
   window.console = {};
   window.console.log = opera.postError;
 }
+
+function assert(value, message) {
+    if (message === undefined) message = "Assertion error";
+    if(value !== true) {
+        throw new Error(message);
+    }
+}
+
 // objToString()
 // ---------------------------------------------------------------------------
 /*
@@ -159,6 +214,7 @@ function getJSON(decimal_integer)
 // ===============================================================================================
 function Numeric_Value(input_string, parse_as, round_mode, nvcb)
 {
+assert(arguments.length == 4);
   // Numeric_Value private static data
   // =============================================================================================
   //
@@ -703,6 +759,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
    */
   var analyze = function(value,cb)
   {
+    assert(arguments.length == 2);
     if (value.isNaN)
     {
       if (value.binary_exponent === 128)
@@ -2129,6 +2186,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
    */
   var gen_dec_from_bin2 = function(value, identifier)
   {
+    assert(arguments.length == 2);
     // Normalize the number, unless it is zero
     // Test if the value is zero and set value.isZero if it is.
     if (value.binary_integer === '0' && value.binary_fraction === '0'
@@ -2274,12 +2332,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
       }
       else if (bin_string[i] !== '0')
       {
-        throw 'eval_bin: invalid binary digit: ' + bin_strin[1]; // there is a
-        // spelling
-        // error here
-        // ---------probably
-        // need to
-        // fix!!!!
+        throw 'eval_bin: invalid binary digit: ' + bin_string[1]; // there is a
       }
       power_of_two += power_of_two;
     }
@@ -2292,6 +2345,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
    */
   var gen_bin_from_dec2 = function(value, radix)
   {
+    assert(arguments.length == 2);
     // Special case if the value is zero
     if (value.decimal_integer === '0' && value.decimal_fraction === '0'
         && value.decimal_exponent === 0)
@@ -2383,6 +2437,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
    */
   var gen_dec_from_bin_enhanced = function(value, cbbb2)
   {
+    assert(arguments.length == 2);
     // Normalize the number, unless it is zero
     // Test if the value is zero and set value.isZero if it is.
     if (value.binary_integer === '0' && value.binary_fraction === '0'
@@ -2448,6 +2503,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
     binary_fraction = value.binary_fraction;
     binary_exponent = value.binary_exponent;
     var btd_callback = function(lines) {
+    assert(arguments.length == 1);
     var JSONResults = makeBtdResult(lines);
     value.decimal_integer = JSONResults.di;
     value.decimal_exponent = (JSONResults.de * 1);
@@ -2484,6 +2540,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
    */
   var gen_bin_from_dec_enhanced = function(value, cbbb)
   {
+    assert(arguments.length == 2);
     // Special case if the value is zero
     if (value.decimal_integer === '0' && value.decimal_fraction === '0'
         && value.decimal_exponent === 0)
@@ -2492,6 +2549,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
       value.binary_integer = '0';
       value.binary_fraction = '0';
       value.binary_exponent = 0;
+      cbbb();
       return;
     }
     // Create working copy of the decimal value
@@ -2551,6 +2609,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
       // value.isZero = true;
       value.isSmallExtreme = true;
       value.isOutOfRange = true;
+      cbbb();
       return;
     }
     decimal_integer = value.decimal_integer; // these are to reset these values
@@ -2569,6 +2628,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
 */
     
     var callback_dtb = function(lines) {
+    assert(arguments.length == 1);
     var JSONResults = makeDtbResult(lines);
     value.binary_integer = JSONResults.bi;
     value.binary_exponent = (JSONResults.be * 1);
@@ -2585,9 +2645,9 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
       value.binary_recurrence = '';
     }
     value.binary_recurrence_start = (JSONResults.brs * 1);
+    cbbb();
     };
     dtb(decimal_integer.toString(), decimal_exponent.toString(),decimal_fraction.toString(), decimal_recurrence.toString(), decimal_recurrence_start.toString(), callback_dtb);
-    cbbb();
   };
   // Numeric_Value private instance functions
   // =============================================================================================
@@ -2599,6 +2659,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
    */
   this.parse_auto = function(input_string, g2)
   {
+    assert(arguments.length == 2);
     // check to see if it is a mixed number
     window.regexInfo = mixedRE.exec(input_string); // TODO really window?
     if (regexInfo)
@@ -2645,6 +2706,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
    */
   this.parse_decimal = function(input_string, g1)
   {
+    assert(arguments.length == 2);
     var regexInfo = mixedRE.exec(input_string);// if it is a mixed number call
     // parse mixed
     if (regexInfo)
@@ -2688,6 +2750,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
    */
   this.parse_mixed = function(mixed_info, guuu)
   {
+    assert(arguments.length == 2);
     this.isValid = false;
     var value_sign = mixed_info[1] ? mixed_info[1] : '+';
     // check the first (left most) value to see if it is a sign, if there is none value_sign becomes
@@ -2790,6 +2853,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
    */
   this.parse_real = function(real_info, cb)
   {
+    assert(arguments.length == 2);
     this.isNegative = (typeof real_info[1] !== 'undefined')
         && (real_info[1] === '-');
     this.decimal_integer = real_info[2] ? ltrim(real_info[2]) : '0';
@@ -2821,6 +2885,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
    */
   this.parse_binary = function(input_string, bincb)
   {
+    assert(arguments.length == 2);
     this.inputType = 'binary';
     var matches = binRE.exec(input_string);
     // matches will either be the string if it matches or null
@@ -2869,7 +2934,11 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
     }
     gen_dec_from_bin_enhanced(this, function() {
     outer.isValid = true;
-    analyze(outer, bincb);
+    analyze(outer, function() {
+
+    	console.log(outer);
+	bincb();
+    });
     });
   };
   // convertToHex()
@@ -3176,6 +3245,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
   var outer = this;
   this.parse_hexadecimal = function(input_string, hexcb)
   {
+    assert(arguments.length == 2);
     this.isValid = false;
     // must match the regular expression for hexadecimal format or fail
     if (!/^[\da-f]+$/i.test(input_string))
@@ -3488,17 +3558,21 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb)
   this.parseAs = parse_as;
   this.inputType = '';
   this.isIEEESubnormal = false;
-  var vcb = function(x) {
+  var vcb = function() {
+        assert(arguments.length == 0);
 	nvcb(outer);
+	return;
   };
   if (typeof parse_as === "undefined")
   {
     this.parse_auto(input_string, vcb);
     return;
   }
+  //def(this);
   switch (parse_as)
   {
     case 2:
+      //watch("decimal_integer", function() { throw new Error(); });
       this.parse_binary(input_string, vcb);
       break;
     case 10:

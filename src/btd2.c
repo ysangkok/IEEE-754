@@ -2,13 +2,17 @@
 //  Michael Lubow
 //  November 2011
 
-#include <gmp.h>
+#include "gmp.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
-//#define BUF 16384
-#define BUF 5000
+#define BUF 17000
+//#define BUF 5000
+
+void substr1(char* x)  {
+if (x[0] != '\0') memmove(x, x+1, strlen(x)+1);
+}
 
 char* repeat_char(const char c,const size_t n)
 {
@@ -60,21 +64,23 @@ void prepend(char* s, const char* t)
     //const int BINARY_PRECISION = 128;
     int       decimal_exponent;
     int       binary_exponent_v;
-    char    binary_integer_v[BUF];
-    char    binary_fraction_v[BUF];
-    char    decimal_fraction_backing[BUF];
-    char*    decimal_fraction = (char*) &decimal_fraction_backing;
-    char    decimal_integer[BUF];
+    char*    binary_integer_v = malloc(BUF);
+    char*    binary_fraction_v = malloc(BUF);
+    char*    decimal_fraction = malloc(BUF);
+    char*    decimal_integer = malloc(BUF);
     int       decimal_recurrence_start = -1;
     int       binary_recurrence_start = -1;
-    char    decimal_recurrence[BUF] = "0";
-    char    binary_recurrence[BUF] = "0";
-    char    temp[BUF];
+    char*    decimal_recurrence = malloc(BUF);
+    strcpy(decimal_recurrence, "0");
+    char*    binary_recurrence = malloc(BUF);
+    strcpy(binary_recurrence, "0");
+    char*    temp = malloc(BUF);
     //int       precision_so_far = 0;
 
     strcpy(binary_integer_v, argv[1]);
     binary_exponent_v = atoi(argv[2]);
     strcpy(binary_fraction_v, argv[3]);
+//printf("bfv %s\n", binary_fraction_v);
 
     mpz_t result;
     mpz_init(result);
@@ -83,8 +89,10 @@ void prepend(char* s, const char* t)
 
     // The n versions of the variable are the ones that are normalized and used
     // for the binary ouput but are not used for generating the decimal values
-    char* binary_integer_n = binary_integer_v;
-    char* binary_fraction_n = binary_fraction_v;
+    char* binary_integer_n = malloc(BUF);
+    strcpy(binary_integer_n, binary_integer_v);
+    char* binary_fraction_n = malloc(BUF);
+    strcpy(binary_fraction_n, binary_fraction_v);
     int binary_exponent_n = binary_exponent_v;
 
     while(atoi(binary_integer_n) > 1)
@@ -104,7 +112,7 @@ void prepend(char* s, const char* t)
       binary_integer_n[1] = '\0';
 //	strcpy(binary_integer_n, binary_fraction_n);
 //      strcpy(binary_fraction_n,  substr(binary_fraction_n,1,strlen(binary_fraction_n)-1));
-	binary_fraction_n++;
+	substr1(binary_fraction_n);
       binary_exponent_n--;
     }
 
@@ -112,27 +120,34 @@ void prepend(char* s, const char* t)
     {
       strcpy(binary_fraction_n, "0");
     }
+      //printf("bi %s\n",binary_integer_v);
 
     //these are copies of the originals
-    char binary_integer[BUF];  strcpy(binary_integer, binary_integer_v);
-    char binary_fraction_backing[BUF]; char* binary_fraction = (char*) &binary_fraction_backing;
+    char* binary_integer = malloc(BUF);
+    strcpy(binary_integer, binary_integer_v);
+    char* binary_fraction = malloc(BUF);
     strcpy(binary_fraction, binary_fraction_v);
     int binary_exponent     = binary_exponent_v;
 
+      //printf("bi %s\n",binary_integer);
     while (binary_exponent > 0)
     {
-      int a;
-      binary_integer[a = strlen(binary_integer)] = binary_fraction[0];
+      int a = strlen(binary_integer);
+
+      binary_integer[a] = binary_fraction[0];
       binary_integer[a+1] = '\0';
       //strcpy(binary_fraction, substr(binary_fraction,1,strlen(binary_fraction-1)));
-      binary_fraction = &(binary_fraction[1]);
+      substr1(binary_fraction);
       if (binary_fraction[0] == '\0')
       {
         strcpy(binary_fraction, "0");
       }
         binary_exponent--;
     }
-    //printf("space needed: %d\n", (int) binary_fraction - (int) binary_fraction_backing);
+    ////printf("space needed: %d\n", (int) binary_fraction - (int) binary_fraction_backing);
+
+
+      //printf("bi %s\n",binary_integer);
 
     while (binary_exponent < 0)
     {
@@ -160,7 +175,7 @@ void prepend(char* s, const char* t)
     mpz_init(di);
     mpz_set_ui(di, 0);
 
-    //printf("bin int len: %d\n", strlen(binary_integer));
+    //printf("bin int len: %s\n", binary_integer);
     int aa = 0, b = 0;
     for (int i = strlen(binary_integer) - 1; i > -1; i--)
     {
@@ -169,7 +184,7 @@ void prepend(char* s, const char* t)
       if (binary_integer[i] == '1')
       {
         mpz_add(di, di, power_of_two);
-        //printf("di aa=%d %s\n", aa, mpz_get_str(NULL,10,di));
+        //printf("di %s\n", mpz_get_str(NULL,10,power_of_two));
 	aa++;
       }
       mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
@@ -222,15 +237,16 @@ void prepend(char* s, const char* t)
     //  Normalize
     decimal_exponent = 0;
 
-    char* ditemp;
-    char* dftemp;
+    char* ditemp = malloc(BUF);
+    char* dftemp = malloc(BUF);
 
-    ditemp = mpz_get_str(NULL, 10, di);
+    mpz_get_str(ditemp, 10, di);
+    //printf("ditemp %s\n", ditemp);
     strcpy(decimal_integer, ditemp);
 
     mp_exp_t a;
 
-    dftemp = mpf_get_str(NULL, &a, 10, 10000, decf);
+    mpf_get_str(dftemp, &a, 10, 10000, decf);
     strcpy(decimal_fraction, dftemp);
 
 /*
@@ -260,7 +276,7 @@ void prepend(char* s, const char* t)
       decimal_integer[1] = '\0';
       //strcpy(decimal_integer, decimal_fraction);
       //strcpy(decimal_fraction, substr(decimal_fraction,1,strlen(decimal_fraction)-1));
-      decimal_fraction++;
+      substr1(decimal_fraction);
       decimal_exponent--;
     }
 
@@ -274,12 +290,12 @@ void prepend(char* s, const char* t)
       strcpy(decimal_fraction, "0");
     }
 
-    char tempDI[BUF]; 
+    char* tempDI = malloc(BUF); 
     strcpy( tempDI, decimal_integer);
     while (tempDI[0] == '0')
     {
       //strcpy(tempDI, substr(tempDI,1,strlen(tempDI)-1));
-      memmove(&tempDI[0], &tempDI[1], sizeof(tempDI) - sizeof(*tempDI));
+      substr1(tempDI);
     }
     if (tempDI[0] == '\0') strcpy(tempDI, "0");
 
@@ -303,6 +319,21 @@ void prepend(char* s, const char* t)
     mpz_clear(result);
     mpz_clear(di);
     mpz_clear(df);
+
+    free(binary_integer_n);
+    free(binary_fraction_n);
+    free(binary_integer_v);
+    free(binary_fraction_v);
+    free(binary_integer);
+    free(binary_fraction);
+    free(binary_recurrence);
+    free(decimal_recurrence);
+    free(decimal_integer);
+    free(decimal_fraction);
+    free(tempDI);
+    free(ditemp);
+    free(dftemp);
+    free(temp);
 
     return 0;
   }

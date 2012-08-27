@@ -405,6 +405,7 @@ $().ready(function()
       }
       var value = null;
       var cb = function(value) {
+	assert(arguments.length == 1);
       analyzer.syntax_message.nodeValue = value.syntax;
       if (value.isValid)
       {
@@ -653,6 +654,7 @@ $().ready(function()
           value_entered_copy = reversed.join('');
         }
         new Numeric_Value(value_entered_copy, 16, roundMode, function(value) {
+          assert(arguments.length == 1);
           if (endianMode === 'littleEndian')
           {
             value.syntax += ' (little endian)';

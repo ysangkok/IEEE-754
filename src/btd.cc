@@ -48,6 +48,7 @@ using namespace std;
     binary_integer_v = argv[1];
     binary_exponent_v = atoi(argv[2]);
     binary_fraction_v = argv[3];
+//printf("bfv %s\n", binary_fraction_v.c_str());
 
     mpz_t result;
     mpz_init(result);
@@ -79,6 +80,7 @@ using namespace std;
     {
       binary_fraction_n = "0";
     }
+      //printf("bi %s\n",binary_integer_v.c_str());
 
     //these are copies of the originals
 
@@ -86,9 +88,11 @@ using namespace std;
     string binary_fraction  = binary_fraction_v;
     int binary_exponent     = binary_exponent_v;
 
+      //printf("bi %s\n",binary_integer.c_str());
     while (binary_exponent > 0)
     {
       binary_integer = binary_integer + binary_fraction[0];
+
       binary_fraction = binary_fraction.substr(1);
       if (binary_fraction.empty())
       {
@@ -96,6 +100,9 @@ using namespace std;
       }
         binary_exponent--;
     }
+
+      //printf("bi %s\n",binary_integer.c_str());
+
 
     while (binary_exponent < 0)
     {
@@ -120,6 +127,8 @@ using namespace std;
     mpz_init(di);
     mpz_set_ui(di, 0);
 
+  //printf("bin int len: %s\n", binary_integer.c_str());
+int aa=0, b=0;
     for (int i = binary_integer.length() - 1; i > -1; i--)
     {
       //  if it's a 1 you add the decimal integer to the power of two (power of
@@ -127,9 +136,16 @@ using namespace std;
       if (binary_integer[i] == '1')
       {
         mpz_add(di, di, power_of_two);
+       //printf("di %s\n", mpz_get_str(NULL,10,power_of_two));
+	aa++;
       }
       mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
+     //printf("power_of_two b=%d %s\n", b, mpz_get_str(NULL,10,power_of_two));
+      b++;
+
     }
+ //printf("aa = %d\nb = %d\n",aa,b);
+
 
     //  Decimal fraction part
     //  reset the power_of_two back to 1
@@ -177,6 +193,8 @@ using namespace std;
     char* dftemp;
 
     ditemp = mpz_get_str(NULL, 10, di);
+    //printf("ditemp %s\n", ditemp);
+
     decimal_integer = ditemp;
 
     mp_exp_t a;
