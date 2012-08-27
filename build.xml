@@ -18,7 +18,7 @@
     <arg value="DISABLE_EXCEPTION_CATCHING=${disableexceptioncatching}"/>
     <arg value="-g"/>
     <srcfile/>
-    <arg value="/home/janus/gmp.js/.libs/libgmp.a" />
+    <arg value="libgmp.a" />
     <arg line="-o"/>
     <targetfile />
     <fileset dir="src" includes="*.links.c" />

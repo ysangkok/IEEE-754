@@ -4,46 +4,66 @@
 #include <stdio.h>
 
 mp_limb_t
-my__gmpn_add (mp_ptr __gmp_wp, mp_srcptr __gmp_xp, mp_size_t __gmp_xsize, mp_srcptr __gmp_yp, mp_size_t __gmp_ysize)
-{
-  mp_limb_t __gmp_c;
-  do { mp_size_t __gmp_i; mp_limb_t __gmp_x; __gmp_i = (__gmp_ysize); if (__gmp_i != 0) { if (__gmpn_add_n (__gmp_wp, __gmp_xp, __gmp_yp, __gmp_i)) { do { if (__gmp_i >= (__gmp_xsize)) { (__gmp_c) = 1; goto __gmp_done; } __gmp_x = (__gmp_xp)[__gmp_i]; } while ((((__gmp_wp)[__gmp_i++] = (__gmp_x + 1) & ((~ ((mp_limb_t) (0))) >> 0)) == 0)); } } if ((__gmp_wp) != (__gmp_xp)) do { mp_size_t __gmp_j; ; for (__gmp_j = (__gmp_i); __gmp_j < (__gmp_xsize); __gmp_j++) (__gmp_wp)[__gmp_j] = (__gmp_xp)[__gmp_j]; } while (0); (__gmp_c) = 0; __gmp_done: ; } while (0);
-  return __gmp_c;
+my__gmpn_add (mp_ptr __gmp_wp, mp_srcptr __gmp_xp, mp_size_t __gmp_xsize, mp_srcptr __gmp_yp, mp_size_t __gmp_ysize) {
+    mp_limb_t __gmp_c;
+    do {
+        mp_size_t __gmp_i;
+        mp_limb_t __gmp_x;
+        __gmp_i = (__gmp_ysize);
+        if (__gmp_i != 0) {
+            if (__gmpn_add_n (__gmp_wp, __gmp_xp, __gmp_yp, __gmp_i)) {
+                do {
+                    if (__gmp_i >= (__gmp_xsize)) {
+                        (__gmp_c) = 1;
+                        goto __gmp_done;
+                    }
+                    __gmp_x = (__gmp_xp)[__gmp_i];
+                } while ((((__gmp_wp)[__gmp_i++] = (__gmp_x + 1) & ((~ ((mp_limb_t) (0))) >> 0)) == 0));
+            }
+        }
+        if ((__gmp_wp) != (__gmp_xp)) do {
+                mp_size_t __gmp_j; ;
+                for (__gmp_j = (__gmp_i); __gmp_j < (__gmp_xsize); __gmp_j++) (__gmp_wp)[__gmp_j] = (__gmp_xp)[__gmp_j];
+            } while (0);
+        (__gmp_c) = 0;
+__gmp_done:
+        ;
+    } while (0);
+    return __gmp_c;
 }
 
 void
-my__gmpz_add (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
-{
-  mp_srcptr up, vp;
-  mp_ptr wp;
-  mp_size_t usize, vsize, wsize;
-  mp_size_t abs_usize;
-  mp_size_t abs_vsize;
+my__gmpz_add (mpz_ptr w, mpz_srcptr u, mpz_srcptr v) {
+    mp_srcptr up, vp;
+    mp_ptr wp;
+    mp_size_t usize, vsize, wsize;
+    mp_size_t abs_usize;
+    mp_size_t abs_vsize;
 
-  usize = u->_mp_size;
-  vsize = v->_mp_size;
-  abs_usize = ((usize) >= 0 ? (usize) : -(usize));
-  abs_vsize = ((vsize) >= 0 ? (vsize) : -(vsize));
+    usize = u->_mp_size;
+    vsize = v->_mp_size;
+    abs_usize = ((usize) >= 0 ? (usize) : -(usize));
+    abs_vsize = ((vsize) >= 0 ? (vsize) : -(vsize));
 
-  wsize = abs_usize + 1;
-  if (w->_mp_alloc < wsize)
-    __gmpz_realloc (w, wsize);
+    wsize = abs_usize + 1;
+    if (w->_mp_alloc < wsize)
+        __gmpz_realloc (w, wsize);
 
 
-  up = u->_mp_d;
-  vp = v->_mp_d;
-  wp = w->_mp_d;
+    up = u->_mp_d;
+    vp = v->_mp_d;
+    wp = w->_mp_d;
 
     {
 
-      mp_limb_t cy_limb = my__gmpn_add (wp, up, abs_usize, vp, abs_vsize);
-      wp[abs_usize] = cy_limb;
-      wsize = abs_usize + cy_limb;
-      if (usize < 0)
- wsize = -wsize;
+        mp_limb_t cy_limb = my__gmpn_add (wp, up, abs_usize, vp, abs_vsize);
+        wp[abs_usize] = cy_limb;
+        wsize = abs_usize + cy_limb;
+        if (usize < 0)
+            wsize = -wsize;
     }
 
-  w->_mp_size = wsize;
+    w->_mp_size = wsize;
 }
 
 int main() {
@@ -71,9 +91,9 @@ int main() {
     printf("%s\n", resultstr);
 
     if (strcmp(resultstr, two1088minus1) != 0) {
-	puts("ERROR! 2^1087+2^1087-1 calculated incorrect.");
+        puts("ERROR! 2^1087+2^1087-1 calculated incorrect.");
     } else {
-	puts("2^1087+2^1087-1 calculated correct.");
+        puts("2^1087+2^1087-1 calculated correct.");
     }
 #endif
 
@@ -82,9 +102,9 @@ int main() {
     printf("%s\n", resultstr);
 
     if (strcmp(resultstr, two1088) != 0) {
-	puts("ERROR! 2^1087+2^1087 calculated incorrect.");
+        puts("ERROR! 2^1087+2^1087 calculated incorrect.");
     } else {
-	puts("2^1087+2^1087 calculated correct.");
+        puts("2^1087+2^1087 calculated correct.");
     }
 }
 
