@@ -2311,6 +2311,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb) {
             if (value_sign === '-') {
                 this.isNegative = true;
             }
+            guuu();
             return;
         }
         // Make sure exponents are numeric
@@ -2363,8 +2364,9 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb) {
         }
         this.isValid = true;
         this.syntax = "Decimal number";
+        var outer = this;
         gen_bin_from_dec_enhanced(this, function() {
-            analyze(this, guuu);
+            analyze(outer, guuu);
         });
     };
     // parse_real()
@@ -2808,8 +2810,9 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb) {
             this.isIEEESubnormal = true;
 
             //  Generate corresponding decimal value, and do the analysis
+            var outer = this;
             gen_dec_from_bin_enhanced(this, function() {
-                analyze(this, hexcb);
+                analyze(outer, hexcb);
             });
             return;
         }
