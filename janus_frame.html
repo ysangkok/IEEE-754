@@ -2,6 +2,7 @@
 <head>
 <title>Emscripten Buffer Frame</title>
 <script type="text/javascript">
+//<![CDATA[
 var urlParams = {};
 (function () {
     var match,
@@ -44,9 +45,9 @@ var check = function() {
 };
 setTimeout(check, pollRate);
 };
-
+//]]>
 </script>
-<style>
+<style type="text/css">
 .layer {
 position:relative;
 height: 100%;
@@ -79,7 +80,7 @@ height:100%;
 <body onload="javascript:onLoadHandler();">
 <div id="container">
 <span id="title"></span>
-<textarea style="font-family:Terminus,monospace;font-size:10px; width:50%; float:right; " rows=4>
+<textarea style="font-family:Terminus,monospace;font-size:10px; width:50%; float:right; " rows="4" cols="45">
 window["resultDone"] = function(src, data) {
 	copy(data.join("\n"));
 	console.log(data);
@@ -91,7 +92,7 @@ window["resultDone"] = function(src, data) {
 <iframe id="ifrm" src=""></iframe>
 </div>
 </div>
-<script>
+<script type="text/javascript">
 document.getElementsByTagName('iframe')[0].onload = function() { canCall = true; };
 setEnable(false);
 </script>
