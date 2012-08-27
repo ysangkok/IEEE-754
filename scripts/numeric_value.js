@@ -2364,10 +2364,12 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb) {
         }
         this.isValid = true;
         this.syntax = "Decimal number";
+        {
         var outer = this;
         gen_bin_from_dec_enhanced(this, function() {
             analyze(outer, guuu);
         });
+        }
     };
     // parse_real()
     // ---------------------------------------------------------------------------------------------
@@ -2394,10 +2396,13 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb) {
             cb();
             return;
         }
+        {
+        var outer = this;
         gen_bin_from_dec_enhanced(this, function() {
             outer.isValid = true;
             analyze(outer, cb);
         });
+        }
     };
     // parse_binary()
     // ---------------------------------------------------------------------------------------------
@@ -2446,6 +2451,8 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb) {
             this.binary_fraction = '0';
             this.binary_exponent = 0;
         }
+        {
+        var outer = this;
         gen_dec_from_bin_enhanced(this, function() {
             outer.isValid = true;
             analyze(outer, function() {
@@ -2454,6 +2461,7 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb) {
                 bincb();
             });
         });
+        }
     };
     // convertToHex()
     // -----------------------------------------------------------------------------------------------
@@ -2696,7 +2704,6 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb) {
      * and is used here. User selectable: roundTowardPositive roundTowardNegative
      * roundTowardZero The first two may result in +∞ and -∞, respectively.
      */
-    var outer = this;
     this.parse_hexadecimal = function(input_string, hexcb) {
         assert(arguments.length == 2);
         this.isValid = false;
@@ -2810,10 +2817,12 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb) {
             this.isIEEESubnormal = true;
 
             //  Generate corresponding decimal value, and do the analysis
+            {
             var outer = this;
             gen_dec_from_bin_enhanced(this, function() {
                 analyze(outer, hexcb);
             });
+            }
             return;
         }
         // Infinity?
@@ -2862,9 +2871,12 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb) {
         } else {
             this.syntax = '128-bit hexadecimal';
         }
+        {
+        var outer = this;
         gen_dec_from_bin_enhanced(outer, function() {
             analyze(outer, hexcb);
         });
+        }
     };
     // checkSpecialValue()
     // -------------------------------------------------------------------------
@@ -2976,11 +2988,15 @@ function Numeric_Value(input_string, parse_as, round_mode, nvcb) {
     this.parseAs = parse_as;
     this.inputType = '';
     this.isIEEESubnormal = false;
-    var vcb = function() {
+    var vcb;
+    {
+    var outer = this;
+    vcb = function() {
         assert(arguments.length == 0);
         nvcb(outer);
         return;
     };
+    }
     if (typeof parse_as === "undefined") {
         this.parse_auto(input_string, vcb);
         return;
