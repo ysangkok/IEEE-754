@@ -28,8 +28,7 @@ using namespace std;
  *    binary fraction
  *    binary exponent
 */
-  int main(int argc, char* argv[])
-  {
+int main(int argc, char* argv[]) {
 
     const int BINARY_PRECISION = 128;
     int       decimal_exponent;
@@ -61,26 +60,23 @@ using namespace std;
     string binary_fraction_n = binary_fraction_v;
     int binary_exponent_n = binary_exponent_v;
 
-    while(atoi(binary_integer_n.c_str()) > 1)
-    {
-      temp = binary_integer_n[binary_integer_n.length()-1];
-      binary_fraction_n =  temp + binary_fraction_n;
-      binary_integer_n = binary_integer_n.substr(0, binary_integer_n.length() - 1);
-      binary_exponent_n++;
+    while(atoi(binary_integer_n.c_str()) > 1) {
+        temp = binary_integer_n[binary_integer_n.length()-1];
+        binary_fraction_n =  temp + binary_fraction_n;
+        binary_integer_n = binary_integer_n.substr(0, binary_integer_n.length() - 1);
+        binary_exponent_n++;
     }
 
-    while (binary_integer_n == "0")
-    {
-      binary_integer_n = binary_fraction_n[0];
-      binary_fraction_n = binary_fraction_n.substr(1);
-      binary_exponent_n--;
+    while (binary_integer_n == "0") {
+        binary_integer_n = binary_fraction_n[0];
+        binary_fraction_n = binary_fraction_n.substr(1);
+        binary_exponent_n--;
     }
 
-    if (binary_fraction_n.empty())
-    {
-      binary_fraction_n = "0";
+    if (binary_fraction_n.empty()) {
+        binary_fraction_n = "0";
     }
-      //printf("bi %s\n",binary_integer_v.c_str());
+    //printf("bi %s\n",binary_integer_v.c_str());
 
     //these are copies of the originals
 
@@ -88,32 +84,28 @@ using namespace std;
     string binary_fraction  = binary_fraction_v;
     int binary_exponent     = binary_exponent_v;
 
-      //printf("bi %s\n",binary_integer.c_str());
-    while (binary_exponent > 0)
-    {
-      binary_integer = binary_integer + binary_fraction[0];
+    //printf("bi %s\n",binary_integer.c_str());
+    while (binary_exponent > 0) {
+        binary_integer = binary_integer + binary_fraction[0];
 
-      binary_fraction = binary_fraction.substr(1);
-      if (binary_fraction.empty())
-      {
-        binary_fraction = "0";
-      }
+        binary_fraction = binary_fraction.substr(1);
+        if (binary_fraction.empty()) {
+            binary_fraction = "0";
+        }
         binary_exponent--;
     }
 
-      //printf("bi %s\n",binary_integer.c_str());
+    //printf("bi %s\n",binary_integer.c_str());
 
 
-    while (binary_exponent < 0)
-    {
-      temp = binary_integer[binary_integer.length() - 1];
-      binary_fraction =  temp + binary_fraction;
-      binary_integer = binary_integer.substr(0, binary_integer.length() - 1);
-      if (binary_integer.empty())
-      {
-        binary_integer = "0";
-      }
-      binary_exponent++;
+    while (binary_exponent < 0) {
+        temp = binary_integer[binary_integer.length() - 1];
+        binary_fraction =  temp + binary_fraction;
+        binary_integer = binary_integer.substr(0, binary_integer.length() - 1);
+        if (binary_integer.empty()) {
+            binary_integer = "0";
+        }
+        binary_exponent++;
     }
 
     //  Decimal integer part
@@ -127,24 +119,22 @@ using namespace std;
     mpz_init(di);
     mpz_set_ui(di, 0);
 
-  //printf("bin int len: %s\n", binary_integer.c_str());
-int aa=0, b=0;
-    for (int i = binary_integer.length() - 1; i > -1; i--)
-    {
-      //  if it's a 1 you add the decimal integer to the power of two (power of
-      //  two starts at 1)
-      if (binary_integer[i] == '1')
-      {
-        mpz_add(di, di, power_of_two);
-       //printf("di %s\n", mpz_get_str(NULL,10,power_of_two));
-	aa++;
-      }
-      mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
-     //printf("power_of_two b=%d %s\n", b, mpz_get_str(NULL,10,power_of_two));
-      b++;
+    //printf("bin int len: %s\n", binary_integer.c_str());
+//int aa=0, b=0;
+    for (int i = binary_integer.length() - 1; i > -1; i--) {
+        //  if it's a 1 you add the decimal integer to the power of two (power of
+        //  two starts at 1)
+        if (binary_integer[i] == '1') {
+            mpz_add(di, di, power_of_two);
+            //printf("di %s\n", mpz_get_str(NULL,10,power_of_two));
+            //aa++;
+        }
+        mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
+        //printf("power_of_two b=%d %s\n", b, mpz_get_str(NULL,10,power_of_two));
+        //b++;
 
     }
- //printf("aa = %d\nb = %d\n",aa,b);
+//printf("aa = %d\nb = %d\n",aa,b);
 
 
     //  Decimal fraction part
@@ -158,14 +148,12 @@ int aa=0, b=0;
     decimal_fraction = "0";
 
     //printf("binary_fraction pre-add: %s\n", binary_fraction.c_str());
-    for (int i = binary_fraction.length() - 1; i > -1; i--)
-    {
-      //  if it is 1 add the decimal fraction to the power of two
-      if (binary_fraction[i] == '1')
-      {
-        mpz_add(df, df, power_of_two);
-      }
-      mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
+    for (int i = binary_fraction.length() - 1; i > -1; i--) {
+        //  if it is 1 add the decimal fraction to the power of two
+        if (binary_fraction[i] == '1') {
+            mpz_add(df, df, power_of_two);
+        }
+        mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
     }
 
 
@@ -202,41 +190,35 @@ int aa=0, b=0;
     dftemp = mpf_get_str(NULL, &a, 10, 10000, decf);
     decimal_fraction = dftemp;
 
-    while( a <0)
-    {
-      decimal_fraction = "0" + decimal_fraction;
-      a++;
+    while( a <0) {
+        decimal_fraction = "0" + decimal_fraction;
+        a++;
     }
 
-    while (decimal_integer.length()>1)
-    {
-      temp = decimal_integer[decimal_integer.length()-1];
-      decimal_fraction =  temp + decimal_fraction;
-      decimal_integer = decimal_integer.substr(0, decimal_integer.length() - 1);
-      decimal_exponent++;
+    while (decimal_integer.length()>1) {
+        temp = decimal_integer[decimal_integer.length()-1];
+        decimal_fraction =  temp + decimal_fraction;
+        decimal_integer = decimal_integer.substr(0, decimal_integer.length() - 1);
+        decimal_exponent++;
     }
 
-    while (decimal_integer == "0")
-    {
-      decimal_integer = decimal_fraction[0];
-      decimal_fraction = decimal_fraction.substr(1);
-      decimal_exponent--;
+    while (decimal_integer == "0") {
+        decimal_integer = decimal_fraction[0];
+        decimal_fraction = decimal_fraction.substr(1);
+        decimal_exponent--;
     }
 
-    if (decimal_integer.empty() == true)
-    {
-      decimal_integer = "0";
+    if (decimal_integer.empty() == true) {
+        decimal_integer = "0";
     }
 
-    if (decimal_fraction.empty()==true)
-    {
-      decimal_fraction = "0";
+    if (decimal_fraction.empty()==true) {
+        decimal_fraction = "0";
     }
 
     string tempDI = decimal_integer;
-    while (tempDI[0] == '0')
-    {
-      tempDI = tempDI.substr(1);
+    while (tempDI[0] == '0') {
+        tempDI = tempDI.substr(1);
     }
     if (tempDI == "") tempDI = "0";
 
@@ -256,5 +238,5 @@ int aa=0, b=0;
     printf("%d\n", binary_exponent_n);
 
     return 0;
-  }
+}
 

@@ -7,7 +7,7 @@ int main() {
     char powtwo1087[] = "1658079259093488585543641880321370579349968074867852233579735924960709341741017881738939463282172923864572541864483323178105313176664420162494573772314529873277070739673631632297712908223227628267436176822048727601659965304215082587079502689477915085543915982949243040172715332527968276743670394950828083309016741815037909270528";
     //char powtwo1088[] = "3316158518186977171087283760642741158699936149735704467159471849921418683482035763477878926564345847729145083728966646356210626353328840324989147544629059746554141479347263264595425816446455256534872353644097455203319930608430165174159005378955830171087831965898486080345430665055936553487340789901656166618033483630075818541056";
 
-    #include "powers.h"
+#include "powers.h"
 
     mpz_t power_of_two;
     mpz_init(power_of_two);
@@ -19,21 +19,21 @@ int main() {
     mpz_t result;
     mpz_init(result);
 
-int i;
-for (i=0; i<=sizeof(twos)/sizeof(int)-1; i++) {
-    mpz_set_str(one, twos[i], 10);
+    int i;
+    for (i=0; i<=sizeof(twos)/sizeof(int)-1; i++) {
+        mpz_set_str(one, twos[i], 10);
 
-    mpz_add(result,power_of_two,one);
+        mpz_add(result,power_of_two,one);
 
-    char* resultstr = mpz_get_str(NULL, 10, result);
+        char* resultstr = mpz_get_str(NULL, 10, result);
 
-    if (strcmp(resultstr, sums[i]) != 0) {
-	printf("ERROR! %d calculated incorrect.\n",i);
-	return 1;
-    } else {
-	printf("%d calculated correct.\n",i);
+        if (strcmp(resultstr, sums[i]) != 0) {
+            printf("ERROR! %d calculated incorrect.\n",i);
+            return 1;
+        } else {
+            printf("%d calculated correct.\n",i);
+        }
     }
-}
 
 }
 

@@ -2,7 +2,7 @@
 //  Michael Lubow
 //  November 2011
 
-#include "gmp.h"
+#include <gmp.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -11,22 +11,20 @@
 //#define BUF 5000
 
 void substr1(char* x)  {
-if (x[0] != '\0') memmove(x, x+1, strlen(x)+1);
+    if (x[0] != '\0') memmove(x, x+1, strlen(x)+1);
 }
 
-char* repeat_char(const char c,const size_t n)
-{
-   static char buf[BUF+1];
-   size_t tn=n;
-   if(tn>BUF)
-      tn=BUF;
-   memset(buf,c,tn);
-   buf[tn]=0;
-   return buf;
+char* repeat_char(const char c,const size_t n) {
+    static char buf[BUF+1];
+    size_t tn=n;
+    if(tn>BUF)
+        tn=BUF;
+    memset(buf,c,tn);
+    buf[tn]=0;
+    return buf;
 }
 
-void prepend(char* s, const char* t)
-{
+void prepend(char* s, const char* t) {
     size_t len = strlen(t);
 
     memmove(s + len, s, strlen(s)+1);
@@ -54,12 +52,11 @@ void prepend(char* s, const char* t)
  *    binary fraction
  *    binary exponent
 */
-  int main(int argc, char* argv[])
-  {
-	if (argc != 4) {
-		puts("Need arguments!");
-		exit(1);
-	}
+int main(int argc, char* argv[]) {
+    if (argc != 4) {
+        puts("Need arguments!");
+        exit(1);
+    }
 
     //const int BINARY_PRECISION = 128;
     int       decimal_exponent;
@@ -95,32 +92,29 @@ void prepend(char* s, const char* t)
     strcpy(binary_fraction_n, binary_fraction_v);
     int binary_exponent_n = binary_exponent_v;
 
-    while(atoi(binary_integer_n) > 1)
-    {
-	temp[0] = binary_integer_n[strlen(binary_integer_n)-1];
-	temp[1] = '\0';
+    while(atoi(binary_integer_n) > 1) {
+        temp[0] = binary_integer_n[strlen(binary_integer_n)-1];
+        temp[1] = '\0';
 //      strcpy(temp,&(binary_integer_n[strlen(binary_integer_n)-1]));
-      strcpy(binary_fraction_n, strcat(temp, binary_fraction_n));
-      //strcpy(binary_integer_n, substr(binary_integer_n,0, strlen(binary_integer_n) - 1));
-      binary_integer_n[strlen(binary_integer_n)-1] = '\0';
-      binary_exponent_n++;
+        strcpy(binary_fraction_n, strcat(temp, binary_fraction_n));
+        //strcpy(binary_integer_n, substr(binary_integer_n,0, strlen(binary_integer_n) - 1));
+        binary_integer_n[strlen(binary_integer_n)-1] = '\0';
+        binary_exponent_n++;
     }
 
-    while (strcmp(binary_integer_n,"0") == 0)
-    {
-      binary_integer_n[0] = binary_fraction_n[0];
-      binary_integer_n[1] = '\0';
+    while (strcmp(binary_integer_n,"0") == 0) {
+        binary_integer_n[0] = binary_fraction_n[0];
+        binary_integer_n[1] = '\0';
 //	strcpy(binary_integer_n, binary_fraction_n);
 //      strcpy(binary_fraction_n,  substr(binary_fraction_n,1,strlen(binary_fraction_n)-1));
-	substr1(binary_fraction_n);
-      binary_exponent_n--;
+        substr1(binary_fraction_n);
+        binary_exponent_n--;
     }
 
-    if (binary_fraction_n[0] == '\0')
-    {
-      strcpy(binary_fraction_n, "0");
+    if (binary_fraction_n[0] == '\0') {
+        strcpy(binary_fraction_n, "0");
     }
-      //printf("bi %s\n",binary_integer_v);
+    //printf("bi %s\n",binary_integer_v);
 
     //these are copies of the originals
     char* binary_integer = malloc(BUF);
@@ -129,39 +123,35 @@ void prepend(char* s, const char* t)
     strcpy(binary_fraction, binary_fraction_v);
     int binary_exponent     = binary_exponent_v;
 
-      //printf("bi %s\n",binary_integer);
-    while (binary_exponent > 0)
-    {
-      int a = strlen(binary_integer);
+    //printf("bi %s\n",binary_integer);
+    while (binary_exponent > 0) {
+        int a = strlen(binary_integer);
 
-      binary_integer[a] = binary_fraction[0];
-      binary_integer[a+1] = '\0';
-      //strcpy(binary_fraction, substr(binary_fraction,1,strlen(binary_fraction-1)));
-      substr1(binary_fraction);
-      if (binary_fraction[0] == '\0')
-      {
-        strcpy(binary_fraction, "0");
-      }
+        binary_integer[a] = binary_fraction[0];
+        binary_integer[a+1] = '\0';
+        //strcpy(binary_fraction, substr(binary_fraction,1,strlen(binary_fraction-1)));
+        substr1(binary_fraction);
+        if (binary_fraction[0] == '\0') {
+            strcpy(binary_fraction, "0");
+        }
         binary_exponent--;
     }
     ////printf("space needed: %d\n", (int) binary_fraction - (int) binary_fraction_backing);
 
 
-      //printf("bi %s\n",binary_integer);
+    //printf("bi %s\n",binary_integer);
 
-    while (binary_exponent < 0)
-    {
-      //strcpy(temp, &(binary_integer[strlen(binary_integer) - 1]));
-      temp[0] = binary_integer[strlen(binary_integer) - 1];
-      temp[1] = '\0';
-      strcpy(binary_fraction, strcat(temp, binary_fraction));
-      //strcpy(binary_integer, substr(binary_integer,0, strlen(binary_integer) - 1));
-      binary_integer[strlen(binary_integer)-1] = '\0';
-      if (binary_integer[0] == '\0')
-      {
-        strcpy(binary_integer, "0");
-      }
-      binary_exponent++;
+    while (binary_exponent < 0) {
+        //strcpy(temp, &(binary_integer[strlen(binary_integer) - 1]));
+        temp[0] = binary_integer[strlen(binary_integer) - 1];
+        temp[1] = '\0';
+        strcpy(binary_fraction, strcat(temp, binary_fraction));
+        //strcpy(binary_integer, substr(binary_integer,0, strlen(binary_integer) - 1));
+        binary_integer[strlen(binary_integer)-1] = '\0';
+        if (binary_integer[0] == '\0') {
+            strcpy(binary_integer, "0");
+        }
+        binary_exponent++;
     }
 
     //  Decimal integer part
@@ -176,20 +166,18 @@ void prepend(char* s, const char* t)
     mpz_set_ui(di, 0);
 
     //printf("bin int len: %s\n", binary_integer);
-    int aa = 0, b = 0;
-    for (int i = strlen(binary_integer) - 1; i > -1; i--)
-    {
-      //  if it's a 1 you add the decimal integer to the power of two (power of
-      //  two starts at 1)
-      if (binary_integer[i] == '1')
-      {
-        mpz_add(di, di, power_of_two);
-        //printf("di %s\n", mpz_get_str(NULL,10,power_of_two));
-	aa++;
-      }
-      mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
-      //printf("power_of_two b=%d %s\n", b, mpz_get_str(NULL,10,power_of_two));
-      b++;
+    //int aa = 0, b = 0;
+    for (int i = strlen(binary_integer) - 1; i > -1; i--) {
+        //  if it's a 1 you add the decimal integer to the power of two (power of
+        //  two starts at 1)
+        if (binary_integer[i] == '1') {
+            mpz_add(di, di, power_of_two);
+            //printf("di %s\n", mpz_get_str(NULL,10,power_of_two));
+            //aa++;
+        }
+        mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
+        //printf("power_of_two b=%d %s\n", b, mpz_get_str(NULL,10,power_of_two));
+        //b++;
     }
     //printf("aa = %d\nb = %d\n",aa,b);
 
@@ -205,16 +193,14 @@ void prepend(char* s, const char* t)
 
     //printf("binary_fraction pre-add: %s\n", binary_fraction);
     int j = 0, k = 0;
-    for (int i = strlen(binary_fraction) - 1; i > -1; i--)
-    {
-      //  if it is 1 add the decimal fraction to the power of two
-      if (binary_fraction[i] == '1')
-      {
-	j++;
-        mpz_add(df, df, power_of_two);
-      }
-      mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
-      k++;
+    for (int i = strlen(binary_fraction) - 1; i > -1; i--) {
+        //  if it is 1 add the decimal fraction to the power of two
+        if (binary_fraction[i] == '1') {
+            j++;
+            mpz_add(df, df, power_of_two);
+        }
+        mpz_add(power_of_two, power_of_two, power_of_two); //double the power_of_two
+        k++;
     }
     //printf("j = %d\nk = %d\n",j,k);
 
@@ -249,53 +235,48 @@ void prepend(char* s, const char* t)
     mpf_get_str(dftemp, &a, 10, 10000, decf);
     strcpy(decimal_fraction, dftemp);
 
-/*
-    while( a <0)
-    {
-      strcpy(decimal_fraction, strcat("0", decimal_fraction));
-      a++;
-    }
-*/
+    /*
+        while( a <0)
+        {
+          strcpy(decimal_fraction, strcat("0", decimal_fraction));
+          a++;
+        }
+    */
     prepend(decimal_fraction, repeat_char('0', abs(a)));
 
 
-    while (strlen(decimal_integer)>1)
-    {
-      temp[0] = decimal_integer[strlen(decimal_integer)-1];
-      temp[1] = '\0';
-      //strcpy(temp, &(decimal_integer[strlen(decimal_integer)-1]));
-      strcpy(decimal_fraction, strcat(temp, decimal_fraction));
-      //strcpy(decimal_integer, substr(decimal_integer,0, strlen(decimal_integer) - 1));
-      decimal_integer[strlen(decimal_integer)-1] = '\0';
-      decimal_exponent++;
+    while (strlen(decimal_integer)>1) {
+        temp[0] = decimal_integer[strlen(decimal_integer)-1];
+        temp[1] = '\0';
+        //strcpy(temp, &(decimal_integer[strlen(decimal_integer)-1]));
+        strcpy(decimal_fraction, strcat(temp, decimal_fraction));
+        //strcpy(decimal_integer, substr(decimal_integer,0, strlen(decimal_integer) - 1));
+        decimal_integer[strlen(decimal_integer)-1] = '\0';
+        decimal_exponent++;
     }
 
-    while (strcmp(decimal_integer, "0") == 0)
-    {
-      decimal_integer[0] = decimal_fraction[0];
-      decimal_integer[1] = '\0';
-      //strcpy(decimal_integer, decimal_fraction);
-      //strcpy(decimal_fraction, substr(decimal_fraction,1,strlen(decimal_fraction)-1));
-      substr1(decimal_fraction);
-      decimal_exponent--;
+    while (strcmp(decimal_integer, "0") == 0) {
+        decimal_integer[0] = decimal_fraction[0];
+        decimal_integer[1] = '\0';
+        //strcpy(decimal_integer, decimal_fraction);
+        //strcpy(decimal_fraction, substr(decimal_fraction,1,strlen(decimal_fraction)-1));
+        substr1(decimal_fraction);
+        decimal_exponent--;
     }
 
-    if (decimal_integer[0] == '\0')
-    {
-      strcpy(decimal_integer, "0");
+    if (decimal_integer[0] == '\0') {
+        strcpy(decimal_integer, "0");
     }
 
-    if (decimal_fraction[0] == '\0')
-    {
-      strcpy(decimal_fraction, "0");
+    if (decimal_fraction[0] == '\0') {
+        strcpy(decimal_fraction, "0");
     }
 
-    char* tempDI = malloc(BUF); 
+    char* tempDI = malloc(BUF);
     strcpy( tempDI, decimal_integer);
-    while (tempDI[0] == '0')
-    {
-      //strcpy(tempDI, substr(tempDI,1,strlen(tempDI)-1));
-      substr1(tempDI);
+    while (tempDI[0] == '0') {
+        //strcpy(tempDI, substr(tempDI,1,strlen(tempDI)-1));
+        substr1(tempDI);
     }
     if (tempDI[0] == '\0') strcpy(tempDI, "0");
 
@@ -336,5 +317,5 @@ void prepend(char* s, const char* t)
     free(temp);
 
     return 0;
-  }
+}
 
