@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="janus" default="build-c" basedir=".">
+
+  <property name="optlevel" value="-O0" />
+  <property name="invokerun" value="0" />
+  <property name="disableexceptioncatching" value="0" />
+
+  <target name="build-c">
+  <apply executable="/home/janus/emscripten/emcc" dest=".">
+    <arg value="${optlevel}" />
+    <arg value="--pre-js" />
+    <arg value="arguments.js" />
+    <arg value="-I"/>
+    <arg value="/home/janus/gmp.js"/>
+    <arg value="-s"/>
+    <arg value="INVOKE_RUN=${invokerun}"/>
+    <arg value="-s"/>
+    <arg value="DISABLE_EXCEPTION_CATCHING=${disableexceptioncatching}"/>
+    <arg value="-g"/>
+    <srcfile/>
+    <arg value="/home/janus/gmp.js/.libs/libgmp.a" />
+    <arg line="-o"/>
+    <targetfile />
+    <fileset dir="src" includes="*.links.c" />
+    <mapper type="glob" from="*.c" to="*.html"/>
+  </apply>
+  </target>
+
+  <target name="clean-c">
+  <delete>
+    <fileset dir="." includes="*.links.html"  />
+  </delete>
+  </target>
+
+</project>
