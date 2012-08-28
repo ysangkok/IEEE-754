@@ -20,32 +20,19 @@
         color:#c00;
 	  }
     </style>
+    <script type="text/javascript" src="concat.links.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
     <script type="text/javascript" src="scripts/jquery.hotkeys.js"></script>
 <script type="text/javascript">
-var resultDone = function(src, lines) {
-	console.log(lines);
-	if (src.indexOf("btd") == -1) {
-		if (lines.length != 7) throw new Error("Wrong count for dtb: " + lines.length);
-		dtbCallback(lines);
-	} else {
-		if (lines.length != 10) throw new Error("Wrong count for btd:" + lines.length);
-		btdCallback(lines);
-	}
-}
-//$(document).ready(
-//(function() {
-//$("#ifrm1").contentWindow.document.getElementById("ifrm").src = "btd2.links.html";
-//$("#ifrm2").contentWindow.document.getElementById("ifrm").src = "dtb.links.html";
-
+window.btd2 = Module.cwrap("btd2", "string", ['string','string','string']);
+window.dtb2 = Module.cwrap("dtb2", "string", ['string','string','string','string','string']);
 window.btd = function(binary_integer, binary_exponent, binary_fraction, callback) {
-	$("#ifrm1")[0].contentWindow.call([binary_integer, binary_exponent, binary_fraction],10);
-	window.btdCallback = callback;
+	var res = btd2(binary_integer, binary_exponent, binary_fraction);
+	callback(res.split("\n"));
 };
 window.dtb = function(decimal_integer, decimal_exponent, decimal_fraction, decimal_recurrence, decimal_recurrence_start, callback) {
-	$("#ifrm2")[0].contentWindow.call([decimal_integer, decimal_exponent, decimal_fraction, decimal_recurrence, decimal_recurrence_start],7);
-	window.dtbCallback = callback;
-
+	var res = dtb2(decimal_integer, decimal_exponent, decimal_fraction, decimal_recurrence, decimal_recurrence_start);
+	callback(res.split("\n"));
 };
 //})();
 //);
@@ -346,10 +333,6 @@ window.dtb = function(decimal_integer, decimal_exponent, decimal_fraction, decim
         </div>
         <button id="kill-this-analyzer" class="kill-this-analyzer" >Close This Analyzer</button>
       </div>
-<div style="display:none">
-<iframe style="width: 100%" id="ifrm1" src="janus_frame.html?frame=btd2.links.html"></iframe>
-<iframe style="width: 100%" id="ifrm2" src="janus_frame.html?frame=dtb2.links.html"></iframe>
-</div>
     </div>
   </body>
 </html>
