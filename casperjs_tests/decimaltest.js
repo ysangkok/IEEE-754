@@ -4,7 +4,6 @@ var utils = require("utils");
 
 var casper = require('casper').create();
 
-
 function testNumber(input, output) {
 	this.input = input;
 	this.output = output;
@@ -12,63 +11,79 @@ function testNumber(input, output) {
 	this.results = [];
 }
 
-var arr = [
+var testCases = [
   new testNumber({entered:'1.0625'}, [{key:"#binary_value", value: '1.0001'}]),
   new testNumber({entered:'1.25'}, [{key:"#binary_value", value: '1.01'}])
 ];
 
-var queuePageTests = function(pagenr) {
-arr.map(function(i) {
-casper.then(function() {
-console.log("pagenr: " + pagenr);
-});
-var input = i.input;
-var output = i.output;
-var oldvalue;
+var queuePageTests = function(pageNumber) {
+	testCases.map(function(i) {
+		casper.then(function() {
+			console.log("Page number: " + pageNumber);
+		});
+		var input = i.input;
+		var output = i.output;
+		var oldvalue;
 
-//utils.dump(input);
-//utils.dump(output);
+		//utils.dump(input);
+		//utils.dump(output);
 
-casper.then(function() { console.log(input.entered); });
+		casper.then(function() {
+			console.log(input.entered);
+		});
 
-casper.thenEvaluate(function(term) {
-        document.getElementById('value-entered').setAttribute("value",term);
-},{term: input.entered});
+		casper.thenEvaluate(
+			function(term) {
+		        document.getElementById('value-entered').setAttribute("value",term);
+			},
+			{term: input.entered}
+		);
 
-casper.then(function(term) {
-        oldvalue = this.fetchText(output[0].key);
-	console.log("oldvalue: " + oldvalue);
-	var outer = this;
-        input.click.map(function(j) { outer.click(j); });
-});
+		casper.then(function() {
+		        oldvalue = this.fetchText(output[0].key);
+			console.log("Old value in output field: " + oldvalue);
+			var outer = this;
+		        input.click.map(function(j) {
+				outer.click(j);
+			});
+		});
 
-casper.then(function(){console.log("wait for idle");});
-casper.waitWhileVisible(".idle");
-casper.then(function(){console.log("waiting for new result");});
-casper.waitFor(function check() {
-    var value = this.fetchText(output[0].key);
-    console.log(value);
-    return value !== oldvalue;
-}, function then() {}, function timeout(){this.test.assertTrue(false,"timeout");});
+		casper.then( function() {
+			console.log("Waiting for busy-spin animation to disappear...");
+		});
+		casper.waitWhileVisible(".idle");
+		casper.then( function() {
+			console.log("Waiting for new result to appear in output field...");
+		});
+		casper.waitFor(
+			function check() {
+				var value = this.fetchText(output[0].key);
+				console.log("Current value: " + value);
+				return value !== oldvalue;
+			},
+			function then() {},
+			function timeout() {
+				this.test.assertTrue(false,"timeout");
+			}
+		);
 
-casper.then(function() {
-    var outer = this;
-    output.map( function (v) {
-      outer.test.assertEquals(outer.fetchText(v.key), v.value);
-    });
-});
+		casper.then(function() {
+			var outer = this;
+			output.map( function (v) {
+				outer.test.assertEquals(outer.fetchText(v.key), v.value);
+			});
+		});
 
-/*
-casper.then(function() {
-    this.captureSelector(i + '.ref.png', 'html');
-});
-*/
-casper.then(function() {
-	i.results.push(this.getPageContent());
-});
-});
+		/*
+		casper.then(function() {
+			this.captureSelector(i + '.ref.png', 'html');
+		});
+		*/
+		casper.then(function() {
+			i.results.push(this.getPageContent());
+		});
+	});
 };
-
 
 casper.start("http://babbage.cs.qc.cuny.edu/IEEE-754/");
 //casper.start('http://localhost:8800/IEEE-754/');
