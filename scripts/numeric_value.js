@@ -77,11 +77,13 @@ if (typeof opera !== 'undefined') {
     window.console.log = opera.postError;
 }
 
-function assert(value, message) {
+if (!window["assert"]) {
+var assert = function(value, message) {
     if (message === undefined) message = "Assertion error";
     if (value !== true) {
         throw new Error(message);
     }
+}
 }
 
 // objToString()

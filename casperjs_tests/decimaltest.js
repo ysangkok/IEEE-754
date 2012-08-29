@@ -17,7 +17,7 @@ var arr = [
   new testNumber({entered:'1.25'}, [{key:"#binary_value", value: '1.01'}])
 ];
 
-var percasper = function(pagenr) {
+var queuePageTests = function(pagenr) {
 arr.map(function(i) {
 casper.then(function() {
 console.log("pagenr: " + pagenr);
@@ -70,10 +70,10 @@ casper.then(function() {
 };
 
 
-casper.start('http://localhost:8800/IEEE-754/');
-percasper(0);
-casper.thenOpen('http://localhost:8800/I2/');
-percasper(1);
+casper.start("http://babbage.cs.qc.cuny.edu/IEEE-754/");
+//casper.start('http://localhost:8800/IEEE-754/');
+queuePageTests(0);
+//casper.thenOpen('http://localhost:8800/I2/');
 
 casper.run(function() {
 	this.test.renderResults(true);
