@@ -4,6 +4,13 @@ var utils = require("utils");
 
 var casper = require('casper').create();
 
+casper.on('page.error', function(msg, trace) {
+    console.error(msg);
+    trace.forEach(function _forEach(item) {
+        console.log('  ', item.file, ':', item.line);
+    });
+});
+
 function testNumber(input, output) {
 	this.input = input;
 	this.output = output;
@@ -85,8 +92,8 @@ var queuePageTests = function(pageNumber) {
 	});
 };
 
-casper.start("http://babbage.cs.qc.cuny.edu/IEEE-754/");
-//casper.start('http://localhost:8800/IEEE-754/');
+//casper.start("http://ysangkok.github.com/IEEE-754/index.xhtml");
+casper.start("http://localhost:8800/IEEE-754/index.xhtml");
 queuePageTests(0);
 //casper.thenOpen('http://localhost:8800/I2/');
 

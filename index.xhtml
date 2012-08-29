@@ -24,15 +24,25 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
     <script type="text/javascript" src="scripts/jquery.hotkeys.js"></script>
 <script type="text/javascript">
+var lock = false;
+
 window.btd2 = Module.cwrap("btd2", "string", ['string','string','string']);
 window.dtb2 = Module.cwrap("dtb2", "string", ['string','string','string','string','string']);
-window.btd = function(binary_integer, binary_exponent, binary_fraction, callback) {
+window.btd = function(binary_integer, binary_exponent, binary_fraction) {
+	console.log(arguments);
+	if (lock) {console.error("busy!"); return null;}
+	lock = true;
 	var res = btd2(binary_integer, binary_exponent, binary_fraction);
-	callback(res.split("\n"));
+	lock = false;
+	return res.split("\n");
 };
-window.dtb = function(decimal_integer, decimal_exponent, decimal_fraction, decimal_recurrence, decimal_recurrence_start, callback) {
+window.dtb = function(decimal_integer, decimal_exponent, decimal_fraction, decimal_recurrence, decimal_recurrence_start) {
+	console.log(arguments);
+	if (lock) {console.error("busy!"); return null;}
+	lock = true;
 	var res = dtb2(decimal_integer, decimal_exponent, decimal_fraction, decimal_recurrence, decimal_recurrence_start);
-	callback(res.split("\n"));
+	lock = false;
+	return res.split("\n");
 };
 //})();
 //);
